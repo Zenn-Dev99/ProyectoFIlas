@@ -8,6 +8,7 @@
     "startCommand": "cd frontend && npm start",
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 10
-  }
+  },
+  "comment": "Este archivo es para el servicio Frontend. El backend tiene su propio railway.json en backend/railway.json"
 }
 
