@@ -1,0 +1,46 @@
+============================================
+VARIABLES DE ENTORNO PARA RAILWAY - BACKEND
+============================================
+
+INSTRUCCIONES:
+1. Ve a Railway → Tu Servicio Backend → Variables
+2. Copia y pega cada variable una por una
+3. Para las claves (APP_KEYS, etc.), ejecuta primero:
+   node scripts/generar-claves-strapi.js
+   Y copia los valores generados
+
+============================================
+
+VARIABLES BÁSICAS:
+
+DATABASE_CLIENT=postgres
+DATABASE_URL=${{Postgres.DATABASE_URL}}
+NODE_ENV=production
+HOST=0.0.0.0
+PORT=${{PORT}}
+CORS_ORIGIN=*
+
+============================================
+
+CLAVES DE SEGURIDAD (GENERAR CON EL SCRIPT):
+
+APP_KEYS=
+API_TOKEN_SALT=
+ADMIN_JWT_SECRET=
+TRANSFER_TOKEN_SALT=
+JWT_SECRET=
+
+============================================
+
+NOTAS:
+- Si usas SQLite en lugar de PostgreSQL, usa:
+  DATABASE_CLIENT=sqlite
+  DATABASE_FILENAME=.tmp/data.db
+  (Y elimina DATABASE_URL)
+
+- CORS_ORIGIN puede ser * para desarrollo, pero en producción
+  usa la URL específica de tu frontend
+
+- Las claves deben generarse ejecutando:
+  node scripts/generar-claves-strapi.js
+

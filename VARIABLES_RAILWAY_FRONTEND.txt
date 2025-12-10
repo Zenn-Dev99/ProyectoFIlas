@@ -1,0 +1,33 @@
+============================================
+VARIABLES DE ENTORNO PARA RAILWAY - FRONTEND
+============================================
+
+INSTRUCCIONES:
+1. Ve a Railway → Tu Servicio Frontend → Variables
+2. Copia y pega cada variable
+3. Reemplaza la URL del backend con la URL real de tu servicio backend
+
+============================================
+
+VARIABLES BÁSICAS:
+
+NEXT_PUBLIC_STRAPI_URL=https://tu-backend.up.railway.app
+NODE_ENV=production
+
+============================================
+
+VARIABLES DE TWILIO (Opcional - Solo si usas WhatsApp):
+
+TWILIO_ACCOUNT_SID=tu_account_sid
+TWILIO_AUTH_TOKEN=tu_auth_token
+TWILIO_WHATSAPP_NUMBER=whatsapp:+1234567890
+TWILIO_ACCOUNT_SID_FOR_API=tu_api_key_sid
+TWILIO_API_KEY_SECRET=tu_api_key_secret
+
+============================================
+
+NOTAS:
+- Reemplaza "https://tu-backend.up.railway.app" con la URL real
+  de tu servicio backend en Railway
+- Puedes encontrar la URL en Railway → Tu Servicio Backend → Settings → Domains
+
