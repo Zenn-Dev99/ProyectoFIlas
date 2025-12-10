@@ -1,0 +1,50 @@
+{
+  "kind": "collectionType",
+  "collectionName": "ordenes",
+  "info": {
+    "singularName": "orden",
+    "pluralName": "ordenes",
+    "displayName": "Orden",
+    "description": "Órdenes de productos para retiro"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "numeroOrden": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "cliente": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::cliente.cliente",
+      "inversedBy": "ordenes"
+    },
+    "productos": {
+      "type": "json",
+      "description": "Lista de productos en formato JSON"
+    },
+    "total": {
+      "type": "decimal"
+    },
+    "estado": {
+      "type": "enumeration",
+      "enum": ["pendiente", "preparado", "retirado", "cancelado"],
+      "default": "pendiente"
+    },
+    "fechaCreacion": {
+      "type": "datetime",
+      "required": true
+    },
+    "fechaPreparacion": {
+      "type": "datetime"
+    },
+    "notas": {
+      "type": "text"
+    }
+  }
+}
+
