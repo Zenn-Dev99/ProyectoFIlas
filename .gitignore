@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Frontend
+frontend/.next/
+frontend/out/
+frontend/.env.local
+frontend/.env*.local
+
+# Backend
+backend/backend/.tmp/
+backend/backend/dist/
+backend/backend/build/
+backend/backend/.cache/
+backend/backend/.strapi/
+backend/backend/.env
+backend/backend/.env.local
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Strapi
+backend/backend/database/
+backend/backend/public/uploads/
+
