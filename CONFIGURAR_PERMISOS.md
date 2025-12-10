@@ -70,7 +70,7 @@ Si quieres usar scripts que inserten datos automáticamente, necesitas crear un 
 
 **Opción A: Variable de entorno**
 
-Crea un archivo `.env` en `backend/backend/`:
+Crea un archivo `.env` en `backend/`:
 
 ```env
 STRAPI_API_TOKEN=tu_token_aqui

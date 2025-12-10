@@ -51,7 +51,7 @@ Crea `.env.local` en `frontend/`:
 NEXT_PUBLIC_STRAPI_URL=http://localhost:1337
 ```
 
-Crea `.env` en `backend/backend/` si necesitas configurar la base de datos:
+Crea `.env` en `backend/` si necesitas configurar la base de datos:
 
 ```env
 DATABASE_CLIENT=better-sqlite3

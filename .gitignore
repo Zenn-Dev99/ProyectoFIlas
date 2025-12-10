@@ -9,13 +9,13 @@ frontend/.env.local
 frontend/.env*.local
 
 # Backend
-backend/backend/.tmp/
-backend/backend/dist/
-backend/backend/build/
-backend/backend/.cache/
-backend/backend/.strapi/
-backend/backend/.env
-backend/backend/.env.local
+backend/.tmp/
+backend/dist/
+backend/build/
+backend/.cache/
+backend/.strapi/
+backend/.env
+backend/.env.local
 
 # Logs
 *.log
@@ -34,6 +34,6 @@ Thumbs.db
 *.swo
 
 # Strapi
-backend/backend/database/
-backend/backend/public/uploads/
+backend/database/
+backend/public/uploads/
 

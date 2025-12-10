@@ -24,7 +24,6 @@ node scripts/crear-usuarios-prueba.js
 ```
 fila-suite/
 ├── backend/          # Strapi CMS (gestión de datos)
-│   └── backend/     # Proyecto Strapi
 ├── frontend/         # Next.js (interfaces de usuario)
 └── package.json      # Scripts de ejecución desde raíz
 ```

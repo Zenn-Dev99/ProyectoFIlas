@@ -10,17 +10,17 @@ npm run dev:backend
 
 ### Paso 2: Ejecuta el script de seed
 
-En otra terminal, desde la carpeta `backend/backend`:
+En otra terminal, desde la carpeta `backend`:
 
 ```bash
-cd backend/backend
+cd backend
 npm run strapi ts:run src/scripts/seed-data.ts
 ```
 
 O desde la raíz del proyecto:
 
 ```bash
-cd backend/backend
+cd backend
 npx strapi ts:run src/scripts/seed-data.ts
 ```
 
