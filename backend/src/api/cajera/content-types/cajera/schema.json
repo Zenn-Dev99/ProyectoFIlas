@@ -1,0 +1,42 @@
+{
+  "kind": "collectionType",
+  "collectionName": "cajeras",
+  "info": {
+    "singularName": "cajera",
+    "pluralName": "cajeras",
+    "displayName": "Cajera",
+    "description": "Cajeras de la sucursal"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "nombre": {
+      "type": "string",
+      "required": true
+    },
+    "codigo": {
+      "type": "string",
+      "unique": true,
+      "required": true
+    },
+    "activa": {
+      "type": "boolean",
+      "default": true
+    },
+    "sucursal": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::sucursal.sucursal",
+      "inversedBy": "cajeras"
+    },
+    "turnos": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::turno.turno",
+      "mappedBy": "cajera"
+    }
+  }
+}
+

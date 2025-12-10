@@ -1,0 +1,55 @@
+{
+  "kind": "collectionType",
+  "collectionName": "usuarios",
+  "info": {
+    "singularName": "usuario",
+    "pluralName": "usuarios",
+    "displayName": "Usuario",
+    "description": "Usuarios del sistema con roles y permisos"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "username": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "email": {
+      "type": "email",
+      "required": true,
+      "unique": true
+    },
+    "password": {
+      "type": "string",
+      "required": true,
+      "private": true
+    },
+    "nombre": {
+      "type": "string",
+      "required": true
+    },
+    "rol": {
+      "type": "enumeration",
+      "enum": [
+        "jefe_general",
+        "jefe_sucursal",
+        "cajera"
+      ],
+      "required": true,
+      "default": "cajera"
+    },
+    "sucursal": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::sucursal.sucursal"
+    },
+    "activo": {
+      "type": "boolean",
+      "default": true
+    }
+  }
+}
+

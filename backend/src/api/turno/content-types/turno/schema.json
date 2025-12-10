@@ -1,0 +1,80 @@
+{
+  "kind": "collectionType",
+  "collectionName": "turnos",
+  "info": {
+    "singularName": "turno",
+    "pluralName": "turnos",
+    "displayName": "Turno",
+    "description": "Gestión de turnos en la fila"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "numero": {
+      "type": "integer",
+      "required": true,
+      "unique": false
+    },
+    "cliente": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::cliente.cliente",
+      "inversedBy": "turnos"
+    },
+    "sucursal": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::sucursal.sucursal",
+      "inversedBy": "turnos"
+    },
+    "tipo": {
+      "type": "enumeration",
+      "enum": ["retiro", "compra", "devolucion"],
+      "required": true
+    },
+    "ordenId": {
+      "type": "string"
+    },
+    "estado": {
+      "type": "enumeration",
+      "enum": ["pendiente", "en-atencion", "atendido", "ausente"],
+      "default": "pendiente",
+      "required": true
+    },
+    "posicionEnFila": {
+      "type": "integer",
+      "required": true
+    },
+    "tiempoEstimado": {
+      "type": "integer",
+      "description": "Tiempo estimado en minutos"
+    },
+    "tiempoPromedioAtencion": {
+      "type": "float",
+      "description": "Tiempo promedio de atención en minutos (calculado)"
+    },
+    "fechaCreacion": {
+      "type": "datetime",
+      "required": true
+    },
+    "fechaInicioAtencion": {
+      "type": "datetime"
+    },
+    "fechaFinAtencion": {
+      "type": "datetime"
+    },
+    "notificado10Numeros": {
+      "type": "boolean",
+      "default": false
+    },
+    "cajera": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::cajera.cajera",
+      "inversedBy": "turnos"
+    }
+  }
+}
+
