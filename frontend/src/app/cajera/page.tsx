@@ -185,7 +185,7 @@ export default function CajeraPage() {
               return fin.getTime() - inicio.getTime();
             });
             
-            const promedioMs = tiemposAtencion.reduce((a, b) => a + b, 0) / tiemposAtencion.length;
+            const promedioMs = tiemposAtencion.reduce((a: number, b: number) => a + b, 0) / tiemposAtencion.length;
             const promedioMinutos = Math.floor(promedioMs / 60000);
             const promedioSegundos = Math.floor((promedioMs % 60000) / 1000);
             setTiempoPromedioAtencion(`${String(promedioMinutos).padStart(2, '0')}:${String(promedioSegundos).padStart(2, '0')}`);
