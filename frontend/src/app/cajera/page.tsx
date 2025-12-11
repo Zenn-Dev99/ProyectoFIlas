@@ -67,58 +67,6 @@ export default function CajeraPage() {
   const [loading, setLoading] = useState(true);
   const [tiempoEnTurno, setTiempoEnTurno] = useState<string>("00:00");
 
-  useEffect(() => {
-    // Cargar configuración desde localStorage
-    const configStr = localStorage.getItem("cajeraConfig");
-    if (!configStr) {
-      // Si no hay configuración, redirigir a inicio
-      router.push("/cajera/inicio");
-      return;
-    }
-
-    try {
-      const config: CajeraConfig = JSON.parse(configStr);
-      setTiposServicioConfig(config.tiposServicio);
-      
-      // Cargar datos y luego establecer la cajera desde la configuración
-      cargarDatos(config.cajeraId);
-    } catch (error) {
-      console.error("Error al cargar configuración:", error);
-      router.push("/cajera/inicio");
-    }
-
-    // Actualizar cada 5 segundos
-    const interval = setInterval(() => {
-      const configStr = localStorage.getItem("cajeraConfig");
-      if (configStr) {
-        const config: CajeraConfig = JSON.parse(configStr);
-        cargarDatos(config.cajeraId);
-      }
-    }, 5000);
-    
-    return () => clearInterval(interval);
-  }, [router, cargarDatos]);
-
-  // Timer para mostrar tiempo en turno
-  useEffect(() => {
-    if (!turnoActual || !(turnoActual as any).fechaInicioAtencion) {
-      return;
-    }
-
-    const calcularTiempo = () => {
-      const inicio = new Date((turnoActual as any).fechaInicioAtencion);
-      const ahora = new Date();
-      const diferencia = ahora.getTime() - inicio.getTime();
-      const minutos = Math.floor(diferencia / 60000);
-      const segundos = Math.floor((diferencia % 60000) / 1000);
-      setTiempoEnTurno(`${String(minutos).padStart(2, '0')}:${String(segundos).padStart(2, '0')}`);
-    };
-
-    calcularTiempo();
-    const interval = setInterval(calcularTiempo, 1000);
-    return () => clearInterval(interval);
-  }, [turnoActual]);
-
   const calcularTiempoEnTurno = (fechaInicio: string) => {
     const inicio = new Date(fechaInicio);
     const ahora = new Date();
@@ -212,7 +160,59 @@ export default function CajeraPage() {
     } finally {
       setLoading(false);
     }
-  }, [router]);
+  }, [router, cajeraActual]);
+
+  useEffect(() => {
+    // Cargar configuración desde localStorage
+    const configStr = localStorage.getItem("cajeraConfig");
+    if (!configStr) {
+      // Si no hay configuración, redirigir a inicio
+      router.push("/cajera/inicio");
+      return;
+    }
+
+    try {
+      const config: CajeraConfig = JSON.parse(configStr);
+      setTiposServicioConfig(config.tiposServicio);
+      
+      // Cargar datos y luego establecer la cajera desde la configuración
+      cargarDatos(config.cajeraId);
+    } catch (error) {
+      console.error("Error al cargar configuración:", error);
+      router.push("/cajera/inicio");
+    }
+
+    // Actualizar cada 5 segundos
+    const interval = setInterval(() => {
+      const configStr = localStorage.getItem("cajeraConfig");
+      if (configStr) {
+        const config: CajeraConfig = JSON.parse(configStr);
+        cargarDatos(config.cajeraId);
+      }
+    }, 5000);
+    
+    return () => clearInterval(interval);
+  }, [router, cargarDatos]);
+
+  // Timer para mostrar tiempo en turno
+  useEffect(() => {
+    if (!turnoActual || !(turnoActual as any).fechaInicioAtencion) {
+      return;
+    }
+
+    const calcularTiempo = () => {
+      const inicio = new Date((turnoActual as any).fechaInicioAtencion);
+      const ahora = new Date();
+      const diferencia = ahora.getTime() - inicio.getTime();
+      const minutos = Math.floor(diferencia / 60000);
+      const segundos = Math.floor((diferencia % 60000) / 1000);
+      setTiempoEnTurno(`${String(minutos).padStart(2, '0')}:${String(segundos).padStart(2, '0')}`);
+    };
+
+    calcularTiempo();
+    const interval = setInterval(calcularTiempo, 1000);
+    return () => clearInterval(interval);
+  }, [turnoActual]);
 
   const llamarTurno = async (turno: Turno) => {
     if (!cajeraActual) {
