@@ -31,11 +31,35 @@ mkdir -p public/uploads || {
 }
 
 echo "✅ Directorio public/uploads creado"
+echo "🔧 Verificando que npm y node estén disponibles..."
+which node && node --version
+which npm && npm --version
 echo "🔧 Ejecutando: npm start"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
-# Ejecutar Strapi con manejo de errores
-# Usar exec para que el proceso principal sea npm start
-# Esto evita que el contenedor se detenga si hay errores no críticos
-exec npm start 2>&1
+# Ejecutar Strapi
+# NO usar exec para poder capturar errores
+npm start 2>&1 &
+NPM_PID=$!
+
+# Esperar un poco y verificar si el proceso sigue corriendo
+sleep 5
+if ! kill -0 $NPM_PID 2>/dev/null; then
+  echo "❌ npm start se detuvo después de 5 segundos"
+  echo "   Esperando 30 segundos para que puedas ver este mensaje..."
+  sleep 30
+  exit 1
+fi
+
+# Si el proceso sigue corriendo, esperar a que termine
+wait $NPM_PID
+EXIT_CODE=$?
+
+if [ $EXIT_CODE -ne 0 ]; then
+  echo "❌ npm start terminó con código de error: $EXIT_CODE"
+  echo "   Esperando 30 segundos para que puedas ver este mensaje..."
+  sleep 30
+fi
+
+exit $EXIT_CODE
 

@@ -10,7 +10,7 @@
     "deploy": "strapi deploy",
     "dev": "strapi develop",
     "develop": "strapi develop",
-    "start": "mkdir -p public/uploads && NODE_ENV=production strapi start",
+    "start": "mkdir -p public/uploads && NODE_ENV=production strapi start || (echo '❌ Strapi start falló' && sleep 30 && exit 1)",
     "strapi": "strapi",
     "upgrade": "npx @strapi/upgrade latest",
     "upgrade:dry": "npx @strapi/upgrade latest --dry"
