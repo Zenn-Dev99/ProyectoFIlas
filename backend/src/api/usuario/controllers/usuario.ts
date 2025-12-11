@@ -16,7 +16,7 @@ export default factories.createCoreController('api::usuario.usuario', ({ strapi 
       // Buscar usuario por username
       const usuarios = await strapi.entityService.findMany('api::usuario.usuario', {
         filters: { username },
-        populate: ['sucursal', 'cajera'],
+        populate: ['sucursal'],
       });
 
       if (!usuarios || usuarios.length === 0) {
@@ -49,7 +49,6 @@ export default factories.createCoreController('api::usuario.usuario', ({ strapi 
           rol: usuario.rol,
           activo: usuario.activo,
           sucursal: usuario.sucursal || null,
-          cajera: usuario.cajera || null,
         },
       });
     } catch (error) {
