@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { getTurnos, actualizarTurno, obtenerSucursalPorDefecto, obtenerCajeras, fetchAPI } from "@/lib/strapi";
 import { notificarTurnoLlamado } from "@/lib/whatsapp";
@@ -212,7 +212,7 @@ export default function CajeraPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [router]);
 
   const llamarTurno = async (turno: Turno) => {
     if (!cajeraActual) {

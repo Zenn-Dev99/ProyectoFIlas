@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { obtenerTodasLasCajeras, crearCajera, eliminarCajera } from "@/lib/strapi";
 import { useSucursal } from "@/contexts/SucursalContext";
 
@@ -20,13 +20,7 @@ export default function AdminCajerasPage() {
   const [creando, setCreando] = useState(false);
   const [eliminando, setEliminando] = useState<number | null>(null);
 
-  useEffect(() => {
-    if (!sucursalLoading && sucursalSeleccionada) {
-      cargarCajeras();
-    }
-  }, [sucursalSeleccionada, sucursalLoading, cargarCajeras]);
-
-  const cargarCajeras = async () => {
+  const cargarCajeras = useCallback(async () => {
     if (!sucursalSeleccionada) {
       setLoading(false);
       return;
@@ -40,7 +34,13 @@ export default function AdminCajerasPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [sucursalSeleccionada]);
+
+  useEffect(() => {
+    if (!sucursalLoading && sucursalSeleccionada) {
+      cargarCajeras();
+    }
+  }, [sucursalSeleccionada, sucursalLoading, cargarCajeras]);
 
   const handleCrear = async (e: React.FormEvent) => {
     e.preventDefault();

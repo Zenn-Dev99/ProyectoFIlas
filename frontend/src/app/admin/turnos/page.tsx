@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { obtenerTodosLosTurnos, actualizarTurno } from "@/lib/strapi";
 import { useSucursal } from "@/contexts/SucursalContext";
 import { useRouter } from "next/navigation";
@@ -35,15 +35,7 @@ export default function AdminTurnosPage() {
   const [filtroEstado, setFiltroEstado] = useState<string>("todos");
   const [filtroTipo, setFiltroTipo] = useState<string>("todos");
 
-  useEffect(() => {
-    if (!sucursalLoading && sucursalSeleccionada) {
-      cargarTurnos();
-      const interval = setInterval(cargarTurnos, 5000);
-      return () => clearInterval(interval);
-    }
-  }, [sucursalSeleccionada, sucursalLoading, cargarTurnos]);
-
-  const cargarTurnos = async () => {
+  const cargarTurnos = useCallback(async () => {
     if (!sucursalSeleccionada) {
       setLoading(false);
       return;
@@ -58,7 +50,15 @@ export default function AdminTurnosPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [sucursalSeleccionada]);
+
+  useEffect(() => {
+    if (!sucursalLoading && sucursalSeleccionada) {
+      cargarTurnos();
+      const interval = setInterval(cargarTurnos, 5000);
+      return () => clearInterval(interval);
+    }
+  }, [sucursalSeleccionada, sucursalLoading, cargarTurnos]);
 
   const finalizarTurno = async (turnoId: number) => {
     if (!confirm("¿Estás seguro de que deseas finalizar este turno?")) {

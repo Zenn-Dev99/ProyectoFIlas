@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { obtenerTodasLasCajeras, getTurnos } from "@/lib/strapi";
 import { useSucursal } from "@/contexts/SucursalContext";
 import DashboardSkeleton from "@/components/skeletons/DashboardSkeleton";
@@ -24,15 +24,7 @@ export default function AdminDashboard() {
   });
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (!sucursalLoading && sucursalSeleccionada) {
-      cargarDatos();
-      const interval = setInterval(cargarDatos, 10000);
-      return () => clearInterval(interval);
-    }
-  }, [sucursalSeleccionada, sucursalLoading, cargarDatos]);
-
-  const cargarDatos = async () => {
+  const cargarDatos = useCallback(async () => {
     if (!sucursalSeleccionada) {
       setLoading(false);
       return;
@@ -95,7 +87,15 @@ export default function AdminDashboard() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [sucursalSeleccionada]);
+
+  useEffect(() => {
+    if (!sucursalLoading && sucursalSeleccionada) {
+      cargarDatos();
+      const interval = setInterval(cargarDatos, 10000);
+      return () => clearInterval(interval);
+    }
+  }, [sucursalSeleccionada, sucursalLoading, cargarDatos]);
 
   if (loading || sucursalLoading || !sucursalSeleccionada) {
     return <DashboardSkeleton />;

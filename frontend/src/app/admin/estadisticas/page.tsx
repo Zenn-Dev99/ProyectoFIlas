@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { obtenerClientesFrecuentes } from "@/lib/strapi";
 import { useSucursal } from "@/contexts/SucursalContext";
 import {
@@ -44,13 +44,7 @@ export default function AdminEstadisticasPage() {
 
   const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
-  useEffect(() => {
-    if (!sucursalLoading && sucursalSeleccionada) {
-      cargarEstadisticas();
-    }
-  }, [sucursalSeleccionada, sucursalLoading, cargarEstadisticas]);
-
-  const cargarEstadisticas = async () => {
+  const cargarEstadisticas = useCallback(async () => {
     if (!sucursalSeleccionada) {
       setLoading(false);
       return;
@@ -118,7 +112,13 @@ export default function AdminEstadisticasPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [sucursalSeleccionada]);
+
+  useEffect(() => {
+    if (!sucursalLoading && sucursalSeleccionada) {
+      cargarEstadisticas();
+    }
+  }, [sucursalSeleccionada, sucursalLoading, cargarEstadisticas]);
 
   if (loading || sucursalLoading || !sucursalSeleccionada) {
     return (

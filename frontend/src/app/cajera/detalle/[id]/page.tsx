@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { getTurnoById, actualizarTurno, obtenerOrdenPorNumero } from "@/lib/strapi";
 import DetalleTurnoSkeleton from "@/components/skeletons/DetalleTurnoSkeleton";
@@ -41,11 +41,7 @@ export default function DetalleTurnoPage() {
   const [loading, setLoading] = useState(true);
   const [marcandoAtendido, setMarcandoAtendido] = useState(false);
 
-  useEffect(() => {
-    cargarTurno();
-  }, [turnoId, cargarTurno]);
-
-  const cargarTurno = async () => {
+  const cargarTurno = useCallback(async () => {
     try {
       // Usar getTurnoById que ya maneja el fallback a la lista
       const turnoData = await getTurnoById(turnoId);
@@ -73,7 +69,11 @@ export default function DetalleTurnoPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [turnoId]);
+
+  useEffect(() => {
+    cargarTurno();
+  }, [turnoId, cargarTurno]);
 
   const marcarAtendido = async () => {
     if (!turno) return;

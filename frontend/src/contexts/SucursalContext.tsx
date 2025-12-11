@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
 import { obtenerSucursalPorDefecto, obtenerTodasLasSucursales, obtenerSucursalPorId } from "@/lib/strapi";
 import { useAuth } from "./AuthContext";
 
@@ -29,13 +29,7 @@ export function SucursalProvider({ children }: { children: ReactNode }) {
   const [todasLasSucursales, setTodasLasSucursales] = useState<Sucursal[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (usuario) {
-      cargarSucursales();
-    }
-  }, [usuario, cargarSucursales]);
-
-  const cargarSucursales = async () => {
+  const cargarSucursales = useCallback(async () => {
     try {
       // Cargar todas las sucursales
       const sucursales = await obtenerTodasLasSucursales();
@@ -82,7 +76,13 @@ export function SucursalProvider({ children }: { children: ReactNode }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [usuario]);
+
+  useEffect(() => {
+    if (usuario) {
+      cargarSucursales();
+    }
+  }, [usuario, cargarSucursales]);
 
   const cambiarSucursal = async (sucursalId: number) => {
     try {
