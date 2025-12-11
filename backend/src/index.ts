@@ -30,7 +30,7 @@ export default {
       },
     ]);
 
-    // Ejecutar seed automático si está habilitado
-    await seedOnBootstrap(strapi);
+    // Seed automático deshabilitado - usar seed manual cuando sea necesario
+    // await seedOnBootstrap(strapi);
   },
 };
