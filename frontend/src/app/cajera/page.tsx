@@ -128,7 +128,7 @@ export default function CajeraPage() {
     setTiempoEnTurno(`${String(minutos).padStart(2, '0')}:${String(segundos).padStart(2, '0')}`);
   };
 
-  const cargarDatos = async (cajeraIdConfig?: number) => {
+  const cargarDatos = useCallback(async (cajeraIdConfig?: number) => {
     try {
       // Obtener configuración desde localStorage
       const configStr = localStorage.getItem("cajeraConfig");
