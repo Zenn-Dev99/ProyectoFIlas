@@ -23,7 +23,8 @@ RUN npm run build
 
 # Copiar script de inicio
 COPY start.sh /app/start.sh
-RUN chmod +x /app/start.sh
+RUN chmod +x /app/start.sh && \
+    echo "✅ Script de inicio copiado y con permisos de ejecución"
 
 # Exponer puerto (Railway inyecta PORT automáticamente)
 EXPOSE ${PORT:-1337}
