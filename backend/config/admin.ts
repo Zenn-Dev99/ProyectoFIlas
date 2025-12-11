@@ -11,7 +11,7 @@ export default ({ env }) => ({
     },
   },
   secrets: {
-    encryptionKey: env('ENCRYPTION_KEY'),
+    encryptionKey: env('ENCRYPTION_KEY', env('APP_KEYS')?.split(',')[0] || 'default-key-change-in-production'),
   },
   flags: {
     nps: env.bool('FLAG_NPS', true),

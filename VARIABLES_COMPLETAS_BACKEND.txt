@@ -1,0 +1,53 @@
+============================================
+VARIABLES COMPLETAS PARA RAILWAY - BACKEND
+============================================
+
+⚠️ IMPORTANTE: Agrega TODAS estas variables en Railway
+Ve a: Tu Servicio Backend → Variables → Add Variable
+
+============================================
+
+VARIABLES BÁSICAS (OBLIGATORIAS):
+
+DATABASE_CLIENT=sqlite
+DATABASE_FILENAME=.tmp/data.db
+NODE_ENV=production
+HOST=0.0.0.0
+PORT=${{PORT}}
+CORS_ORIGIN=*
+
+============================================
+
+CLAVES DE SEGURIDAD (OBLIGATORIAS - GENERADAS):
+
+APP_KEYS=pwcdmAPEYnLjk6VLdcp085Ng/BVrReGgmGDVKuOXILY=,tIQ9/RG4qMy0xrYzv2VHDz4OOkDiALim+azQOcvymmQ=,elrHlqSJm6DgXm4oxw8DavQV/+RG5oxNjnQPcUzk78Q=,QmFU/kQwNkvkni70HVlhbmScULBLqoeRgqVeLYT1fi4=
+API_TOKEN_SALT=+0VJogGmisHb4UfqcJJWVGppei7YTYFLzdos13wPSYs=
+ADMIN_JWT_SECRET=cjy0vWxDv2HySVlhry8mU9bYfmfQWfpazNwIseZ5zCQ=
+TRANSFER_TOKEN_SALT=a8AebvBO1zZ6UJgq0AKSnfiGkyZWGTf6KMVcOw0vd2g=
+JWT_SECRET=EZq7rtv5+r5kPYnM8/HFvvcpIkVqj4XQQ61kfxvlL0A=
+ENCRYPTION_KEY=pwcdmAPEYnLjk6VLdcp085Ng/BVrReGgmGDVKuOXILY=
+
+============================================
+
+INSTRUCCIONES:
+
+1. Ve a Railway → Tu Servicio Backend → Variables
+2. Agrega cada variable UNA POR UNA
+3. Copia el NOMBRE y el VALOR exactamente como aparece arriba
+4. Las claves ya están generadas, solo cópialas
+
+============================================
+
+NOTAS:
+
+- Si usas PostgreSQL, cambia:
+  DATABASE_CLIENT=postgres
+  DATABASE_URL=${{Postgres.DATABASE_URL}}
+  (Y elimina DATABASE_FILENAME)
+
+- ENCRYPTION_KEY usa el primer valor de APP_KEYS (ya está configurado arriba)
+
+- CORS_ORIGIN puede ser * para desarrollo
+
+============================================
+
