@@ -25,14 +25,16 @@ function AdminLayoutContent({
   }, [usuario, authLoading, router]);
 
   // Filtrar sucursales según permisos
-  const sucursalesDisponibles = todasLasSucursales.filter((sucursal) => {
-    if (!usuario) return false;
-    if (usuario.rol === "jefe_general") return true;
-    if (usuario.rol === "jefe_sucursal" && usuario.sucursal) {
-      return usuario.sucursal?.id === sucursal.id;
-    }
-    return false;
-  });
+  const sucursalesDisponibles = Array.isArray(todasLasSucursales) 
+    ? todasLasSucursales.filter((sucursal) => {
+        if (!usuario) return false;
+        if (usuario.rol === "jefe_general") return true;
+        if (usuario.rol === "jefe_sucursal" && usuario.sucursal) {
+          return usuario.sucursal?.id === sucursal.id;
+        }
+        return false;
+      })
+    : [];
 
   const menuItems = [
     { href: "/admin", label: "📊 Dashboard General", icon: "📊" },

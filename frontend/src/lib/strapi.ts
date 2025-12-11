@@ -66,8 +66,17 @@ export async function obtenerSucursalPorDefecto() {
 }
 
 export async function obtenerTodasLasSucursales() {
-  const data = await fetchAPI('/sucursales?populate=*&sort=nombre:asc');
-  return data.data || [];
+  try {
+    const data = await fetchAPI('/sucursales?populate=*&sort=nombre:asc');
+    // Asegurar que siempre devolvemos un array
+    if (Array.isArray(data?.data)) {
+      return data.data;
+    }
+    return [];
+  } catch (error) {
+    console.error('Error al obtener sucursales:', error);
+    return [];
+  }
 }
 
 export async function obtenerSucursalPorId(sucursalId: number) {

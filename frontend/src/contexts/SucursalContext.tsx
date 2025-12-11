@@ -34,10 +34,13 @@ export function SucursalProvider({ children }: { children: ReactNode }) {
       // Cargar todas las sucursales
       const sucursales = await obtenerTodasLasSucursales();
       
+      // Asegurar que sea un array
+      const sucursalesArray = Array.isArray(sucursales) ? sucursales : [];
+      
       // Filtrar según permisos del usuario
-      let sucursalesDisponibles = sucursales;
+      let sucursalesDisponibles = sucursalesArray;
       if (usuario?.rol === "jefe_sucursal" && usuario.sucursal) {
-        sucursalesDisponibles = sucursales.filter((s: Sucursal) => s.id === usuario.sucursal!.id);
+        sucursalesDisponibles = sucursalesArray.filter((s: Sucursal) => s.id === usuario.sucursal!.id);
       }
       
       setTodasLasSucursales(sucursalesDisponibles);
