@@ -19,21 +19,21 @@ FROM base AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
 
 # Copiar archivos necesarios para standalone
+# Next.js standalone incluye todo lo necesario en .next/standalone
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 
-# Copiar public si existe (Next.js standalone incluye public en .next/standalone)
-# Si no existe, crear directorio vacío
+# Crear directorio public si no existe (Next.js standalone lo incluye, pero por si acaso)
 RUN mkdir -p ./public || true
 
 # Exponer puerto
 EXPOSE 3000
 
-ENV PORT=3000
-ENV HOSTNAME="0.0.0.0"
-
-# Comando de inicio (standalone crea server.js en la raíz)
+# Comando de inicio
+# Con standalone, el server.js está en la raíz del directorio standalone
 CMD ["node", "server.js"]
 
