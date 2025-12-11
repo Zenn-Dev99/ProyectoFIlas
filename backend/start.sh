@@ -35,11 +35,7 @@ echo "🔧 Ejecutando: npm start"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
 # Ejecutar Strapi con manejo de errores
-npm start 2>&1 || {
-  echo "❌ Error al ejecutar npm start"
-  echo "   Código de salida: $?"
-  echo "   Esperando 30 segundos antes de salir..."
-  sleep 30
-  exit 1
-}
+# Usar exec para que el proceso principal sea npm start
+# Esto evita que el contenedor se detenga si hay errores no críticos
+exec npm start 2>&1
 
