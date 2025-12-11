@@ -17,15 +17,12 @@ export default {
    * run jobs, or perform some special logic.
    */
   async bootstrap({ strapi }: { strapi: Core.Strapi }) {
-    // Registrar ruta personalizada de login usando el router de Koa
+    // Registrar ruta personalizada de login
     strapi.server.routes([
       {
         method: 'POST',
         path: '/api/usuarios/login',
-        handler: async (ctx: any) => {
-          const controller = strapi.controller('api::usuario.usuario');
-          return await controller.login(ctx);
-        },
+        handler: 'api::usuario.usuario.login',
         config: {
           auth: false,
         },

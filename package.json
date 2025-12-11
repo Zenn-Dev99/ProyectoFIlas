@@ -14,7 +14,8 @@
     "start:frontend": "cd frontend && npm start",
     "start:backend": "cd backend && npm start",
     "install:all": "npm install && cd frontend && npm install && cd ../backend && npm install",
-    "postinstall": "npm run install:all"
+    "postinstall": "npm run install:all",
+    "seed": "node scripts/seed-datos-prueba.js"
   },
   "keywords": [
     "queue",
