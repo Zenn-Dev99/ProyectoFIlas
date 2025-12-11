@@ -13,7 +13,7 @@ DATABASE_CLIENT=sqlite
 DATABASE_FILENAME=.tmp/data.db
 NODE_ENV=production
 HOST=0.0.0.0
-PORT=${{PORT}}
+PORT=1337
 CORS_ORIGIN=*
 
 ============================================
