@@ -44,18 +44,12 @@ export function SucursalProvider({ children }: { children: ReactNode }) {
 
       // Si es jefe de sucursal, usar su sucursal asignada
       if (usuario?.rol === "jefe_sucursal" && usuario.sucursal) {
-        // Asegurar que la sucursal tenga todas las propiedades requeridas
-        const sucursalCompleta: Sucursal = {
-          id: usuario.sucursal.id,
-          nombre: usuario.sucursal.nombre,
-          codigo: usuario.sucursal.codigo || '',
-          activa: usuario.sucursal.activa ?? true,
-          direccion: usuario.sucursal.direccion,
-          telefono: usuario.sucursal.telefono,
-          tiempoPromedioAtencion: usuario.sucursal.tiempoPromedioAtencion,
-        };
-        setSucursalSeleccionada(sucursalCompleta);
-        localStorage.setItem("sucursalSeleccionadaId", usuario.sucursal.id.toString());
+        // Obtener la sucursal completa desde la API para tener todas las propiedades
+        const sucursalCompleta = await obtenerSucursalPorId(usuario.sucursal.id);
+        if (sucursalCompleta) {
+          setSucursalSeleccionada(sucursalCompleta);
+          localStorage.setItem("sucursalSeleccionadaId", usuario.sucursal.id.toString());
+        }
         setLoading(false);
         return;
       }
