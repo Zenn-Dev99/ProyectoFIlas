@@ -33,6 +33,7 @@ interface EstadisticasTipo {
   tipo: string;
   cantidad: number;
   porcentaje: number;
+  [key: string]: string | number;
 }
 
 export default function AdminEstadisticasPage() {
