@@ -1,6 +1,12 @@
 #!/bin/sh
 # No usar set -e para capturar todos los errores
 
+# Forzar output inmediato
+exec >&2
+
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "🚀 SCRIPT DE INICIO EJECUTADO - $(date)"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "🚀 Iniciando Strapi..."
 echo "📍 Variables de entorno:"
 echo "   NODE_ENV: ${NODE_ENV:-not set}"
