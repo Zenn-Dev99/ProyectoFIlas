@@ -240,7 +240,29 @@ export async function obtenerClientesFrecuentes(sucursalId?: number) {
 // Funciones de autenticación
 export async function loginUsuario(username: string, password: string) {
   try {
-    // Intentar login con Strapi Users
+    // Primero intentar con el endpoint personalizado de login
+    const loginResponse = await fetch(`${STRAPI_URL}/api/usuarios/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        username,
+        password,
+      }),
+    });
+
+    if (loginResponse.ok) {
+      const data = await loginResponse.json();
+      if (data.user) {
+        return {
+          jwt: data.jwt || 'custom_token_' + Date.now(),
+          user: data.user,
+        };
+      }
+    }
+
+    // Si falla, intentar login con Strapi Users
     const response = await fetch(`${STRAPI_URL}/api/auth/local`, {
       method: 'POST',
       headers: {
@@ -258,27 +280,31 @@ export async function loginUsuario(username: string, password: string) {
 
     return await response.json();
   } catch (error) {
-    // Si falla, intentar con nuestra colección personalizada
-    const usuariosResponse = await fetch(
-      `${STRAPI_URL}/api/usuarios?filters[username][$eq]=${username}&populate=*`
-    );
-    
-    if (usuariosResponse.ok) {
-      const usuariosData = await usuariosResponse.json();
-      if (usuariosData.data && usuariosData.data.length > 0) {
-        const usuario = usuariosData.data[0];
-        if (usuario.password === password) {
-          // Retornar formato similar a Strapi auth
-          return {
-            jwt: 'custom_token_' + Date.now(),
-            user: {
-              id: usuario.id,
-              username: usuario.username,
-              email: usuario.email,
-            },
-          };
+    // Si falla, intentar con nuestra colección personalizada (fallback)
+    try {
+      const usuariosResponse = await fetch(
+        `${STRAPI_URL}/api/usuarios?filters[username][$eq]=${username}&populate=*`
+      );
+      
+      if (usuariosResponse.ok) {
+        const usuariosData = await usuariosResponse.json();
+        if (usuariosData.data && usuariosData.data.length > 0) {
+          const usuario = usuariosData.data[0];
+          if (usuario.password === password) {
+            // Retornar formato similar a Strapi auth
+            return {
+              jwt: 'custom_token_' + Date.now(),
+              user: {
+                id: usuario.id,
+                username: usuario.username,
+                email: usuario.email,
+              },
+            };
+          }
         }
       }
+    } catch (fallbackError) {
+      // Ignorar error del fallback
     }
     throw error;
   }
