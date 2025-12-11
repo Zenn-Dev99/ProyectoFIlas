@@ -35,5 +35,5 @@ ENV HOST=0.0.0.0
 
 # Comando de inicio (usar script que muestra más información)
 # Usar sh explícitamente para asegurar que se ejecute
-CMD ["sh", "-c", "echo '🚀 EJECUTANDO SCRIPT DE INICIO...' && /app/start.sh"]
+CMD ["sh", "/app/start.sh"]
 
