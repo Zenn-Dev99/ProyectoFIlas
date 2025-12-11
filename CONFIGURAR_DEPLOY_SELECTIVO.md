@@ -15,10 +15,10 @@ He creado un workflow de GitHub Actions que detecta qué servicio cambió y solo
 1. Ve a Railway: https://railway.app
 2. Haz clic en tu perfil (esquina superior derecha)
 3. Selecciona **"Account Settings"**
-4. Ve a la pestaña **"Tokens"**
-5. Haz clic en **"New Token"**
+4. Ve a la pestaña **"Tokens"** o **"API"**
+5. Haz clic en **"New Token"** o **"Create Token"**
 6. Dale un nombre (ej: "GitHub Actions")
-7. **Copia el token** (solo se muestra una vez)
+7. **Copia el token** (solo se muestra una vez) ⚠️ **Guárdalo bien**
 
 ---
 
@@ -34,30 +34,56 @@ He creado un workflow de GitHub Actions que detecta qué servicio cambió y solo
 
 ---
 
-## 📝 Paso 3: Verificar Nombres de Servicios
+## 📝 Paso 3: Obtener Service IDs de Railway
 
-El workflow usa los nombres de tus servicios en Railway. Verifica que coincidan:
+El workflow necesita los IDs de tus servicios. Para obtenerlos:
 
-1. Ve a Railway y revisa los nombres de tus servicios
-2. Abre `.github/workflows/deploy.yml`
-3. Verifica que los nombres en `service:` coincidan:
-   - `service: 'backend'` → Nombre exacto de tu servicio backend
-   - `service: 'frontend'` → Nombre exacto de tu servicio frontend
+### Opción A: Desde Railway Dashboard
 
-Si los nombres son diferentes, cámbialos en el archivo.
+1. Ve a tu servicio Backend en Railway
+2. En la URL verás algo como: `https://railway.app/project/abc123/service/def456`
+3. El `def456` es el Service ID del Backend
+4. Repite para el Frontend
+
+### Opción B: Usando Railway CLI
+
+```bash
+# Instalar Railway CLI
+npm install -g @railway/cli
+
+# Login
+railway login
+
+# Listar servicios
+railway service list
+```
+
+Luego actualiza `.github/workflows/deploy.yml` con los Service IDs correctos.
 
 ---
 
-## 🚀 Paso 4: Desactivar Auto-Deploy en Railway
+## 🚀 Paso 4: Configurar Service IDs en el Workflow
 
-Para que GitHub Actions controle los deploys:
+1. Abre `.github/workflows/deploy.yml`
+2. Reemplaza `BACKEND_SERVICE_ID` con el ID real de tu servicio backend
+3. Reemplaza `FRONTEND_SERVICE_ID` con el ID real de tu servicio frontend
+
+**Ejemplo:**
+```yaml
+railway link --service abc123def456  # ID del backend
+railway link --service xyz789ghi012  # ID del frontend
+```
+
+## 🚀 Paso 5: (Opcional) Desactivar Auto-Deploy en Railway
+
+Si quieres que **solo** GitHub Actions controle los deploys:
 
 1. Ve a cada servicio en Railway (Backend y Frontend)
 2. **Settings** → **Service Settings**
 3. Busca **"Deploy"** o **"Auto Deploy"**
 4. **Desactiva "Auto Deploy"** o configúralo para que solo se despliegue manualmente
 
-Esto evita que Railway despliegue automáticamente cuando hay cambios.
+**Nota:** Puedes dejar Auto-Deploy activo si quieres que Railway también despliegue automáticamente. GitHub Actions solo agregará la lógica de detección de cambios.
 
 ---
 
