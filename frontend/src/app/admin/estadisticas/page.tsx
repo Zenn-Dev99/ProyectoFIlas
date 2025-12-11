@@ -180,7 +180,7 @@ export default function AdminEstadisticasPage() {
                 fill="#8884d8"
                 dataKey="cantidad"
               >
-                {estadisticasTipo.map((entry, index) => (
+                {Array.isArray(estadisticasTipo) && estadisticasTipo.map((entry, index) => (
                   <Cell
                     key={`cell-${index}`}
                     fill={COLORS[index % COLORS.length]}
@@ -199,7 +199,7 @@ export default function AdminEstadisticasPage() {
           Resumen por Tipo de Pedido
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {estadisticasTipo.map((stat) => (
+          {Array.isArray(estadisticasTipo) && estadisticasTipo.map((stat) => (
             <div
               key={stat.tipo}
               className="p-4 border-2 border-gray-200 rounded-lg"

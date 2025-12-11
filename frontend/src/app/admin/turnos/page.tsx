@@ -192,7 +192,7 @@ export default function AdminTurnosPage() {
                 </tr>
               </thead>
               <tbody>
-                {turnosFiltrados.map((turno) => (
+                {Array.isArray(turnosFiltrados) && turnosFiltrados.map((turno) => (
                   <tr
                     key={turno.id}
                     className="border-b border-gray-100 hover:bg-gray-50"

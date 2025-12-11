@@ -119,7 +119,7 @@ export default function TVPage() {
         </div>
 
         {/* Carrusel de Publicidad */}
-        {publicidades.length > 0 && (
+        {Array.isArray(publicidades) && publicidades.length > 0 && (
           <div className="mt-12">
             <div className="bg-white/10 backdrop-blur-sm rounded-lg p-8">
               <div className="relative h-96 overflow-hidden rounded-lg">
@@ -154,7 +154,7 @@ export default function TVPage() {
               </div>
               {/* Indicadores */}
               <div className="flex justify-center gap-2 mt-4">
-                {publicidades.map((_, index) => (
+                {Array.isArray(publicidades) && publicidades.map((_, index) => (
                   <button
                     key={index}
                     onClick={() => setIndicePublicidad(index)}

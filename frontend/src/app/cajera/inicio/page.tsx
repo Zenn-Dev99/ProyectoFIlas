@@ -232,7 +232,7 @@ export default function InicioCajeraPage() {
             className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg"
           >
             <option value="">-- Selecciona una cajera --</option>
-            {cajeras.map((cajera) => (
+            {Array.isArray(cajeras) && cajeras.map((cajera) => (
               <option key={cajera.id} value={cajera.id}>
                 {cajera.nombre} ({cajera.codigo})
               </option>

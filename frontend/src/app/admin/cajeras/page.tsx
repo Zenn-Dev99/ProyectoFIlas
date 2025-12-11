@@ -172,7 +172,7 @@ export default function AdminCajerasPage() {
           Cajeras ({cajeras.length})
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {cajeras.map((cajera) => (
+          {Array.isArray(cajeras) && cajeras.map((cajera) => (
             <div
               key={cajera.id}
               className={`p-4 border-2 rounded-lg ${

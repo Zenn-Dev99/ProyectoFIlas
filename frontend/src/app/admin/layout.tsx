@@ -105,11 +105,15 @@ function AdminLayoutContent({
                   className="w-full px-3 py-2 bg-gray-800 text-white rounded-lg text-sm border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   disabled={usuario.rol === "jefe_sucursal"}
                 >
-                  {sucursalesDisponibles.map((sucursal) => (
-                    <option key={sucursal.id} value={sucursal.id}>
-                      {sucursal.nombre}
-                    </option>
-                  ))}
+                  {Array.isArray(sucursalesDisponibles) && sucursalesDisponibles.length > 0 ? (
+                    sucursalesDisponibles.map((sucursal) => (
+                      <option key={sucursal.id} value={sucursal.id}>
+                        {sucursal.nombre}
+                      </option>
+                    ))
+                  ) : (
+                    <option value="">Sin sucursales disponibles</option>
+                  )}
                 </select>
               )}
               {sucursalSeleccionada && (
@@ -121,7 +125,7 @@ function AdminLayoutContent({
           )}
 
           <nav className="space-y-2">
-            {menuItems.map((item) => {
+            {Array.isArray(menuItems) && menuItems.length > 0 && menuItems.map((item) => {
               const isActive = pathname === item.href;
               return (
                 <button

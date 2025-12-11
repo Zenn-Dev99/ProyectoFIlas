@@ -656,7 +656,7 @@ export default function CajeraPage() {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {turnosFiltrados.map((turno) => {
+              {Array.isArray(turnosFiltrados) && turnosFiltrados.map((turno) => {
                 const asignadoAOtraCajera = turno.cajera && turno.cajera.id !== cajeraActual?.id;
                 return (
                   <div
