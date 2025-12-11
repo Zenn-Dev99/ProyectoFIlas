@@ -73,7 +73,31 @@ AUTO_SEED=false
    - `🚀 Strapi iniciado correctamente`
    - `✅ Base de datos conectada`
 
-## 💡 Tip
+## 💡 Tip: Si Railway Agrega Comillas Automáticamente
 
-Si después de quitar las comillas sigue fallando, prueba copiar el valor directo de `DATABASE_URL` del servicio PostgreSQL en lugar de usar la referencia `${{Postgres.DATABASE_URL}}`.
+Si Railway está agregando comillas automáticamente, **puede que no sea un problema**. Railway a veces las agrega para valores con caracteres especiales, pero las maneja correctamente internamente.
+
+**Sin embargo**, si estás viendo errores, prueba esto:
+
+### Opción 1: Usar Valor Directo de DATABASE_URL
+
+En lugar de la referencia `${{Postgres.DATABASE_URL}}`:
+
+1. Ve al servicio **PostgreSQL** en Railway
+2. Haz clic en **"Variables"**
+3. Busca `DATABASE_URL` y **copia el valor completo**
+4. Pégalo directamente en el servicio Backend como `DATABASE_URL` (sin la referencia)
+
+El valor debería verse algo así:
+```
+postgresql://postgres:password@postgres.railway.internal:5432/railway
+```
+
+### Opción 2: Verificar que las Comillas No Causen Problemas
+
+Si Railway agrega comillas pero el servicio funciona, **déjalas así**. Railway las maneja correctamente.
+
+### Opción 3: Usar Variables de Proyecto
+
+En Railway, puedes crear variables a nivel de proyecto que se compartan entre servicios, lo que puede evitar problemas de formato.
 
