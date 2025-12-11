@@ -99,13 +99,13 @@ export default function CajeraPage() {
         
         // Establecer cajera desde la configuración (no resetear)
         if (cajeraId && !cajeraActual) {
-          const cajera = cajerasData.find((c) => c.id === cajeraId);
+          const cajera = cajerasData.find((c: Cajera) => c.id === cajeraId);
           if (cajera) {
             setCajeraActual(cajera);
           }
         } else if (cajeraActual && cajeraActual.id !== cajeraId) {
           // Si la cajera cambió en la configuración, actualizarla
-          const cajera = cajerasData.find((c) => c.id === cajeraId);
+          const cajera = cajerasData.find((c: Cajera) => c.id === cajeraId);
           if (cajera) {
             setCajeraActual(cajera);
           }
