@@ -63,6 +63,27 @@ export default ({ env }) => {
     },
   };
 
+  // Log de configuración para debug
+  if (process.env.NODE_ENV === 'production') {
+    console.log('🔍 Configuración de Base de Datos:');
+    console.log(`   Client: ${client}`);
+    if (client === 'postgres') {
+      if (env('DATABASE_URL')) {
+        console.log('   ✅ DATABASE_URL encontrado');
+        // No mostrar la URL completa por seguridad, solo indicar que existe
+        const dbUrl = env('DATABASE_URL');
+        if (dbUrl) {
+          const urlObj = new URL(dbUrl);
+          console.log(`   Host: ${urlObj.hostname}`);
+          console.log(`   Database: ${urlObj.pathname.replace('/', '')}`);
+        }
+      } else {
+        console.log('   ⚠️  DATABASE_URL no encontrado');
+        console.log('   Usando configuración individual');
+      }
+    }
+  }
+
   return {
     connection: {
       client,
