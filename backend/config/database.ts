@@ -32,9 +32,12 @@ export default ({ env }) => {
         // Si hay DATABASE_URL (Railway), usarlo directamente
         ...(env('DATABASE_URL') ? {
           connectionString: env('DATABASE_URL'),
-          ssl: {
-            rejectUnauthorized: false, // Railway PostgreSQL requiere SSL pero con rejectUnauthorized: false
-          },
+          // Railway PostgreSQL requiere SSL con configuración específica
+          ssl: process.env.NODE_ENV === 'production' ? {
+            rejectUnauthorized: false,
+            // Forzar TLS 1.2 o superior
+            require: true,
+          } : false,
         } : {
           // Si no, usar configuración individual
           host: env('DATABASE_HOST', 'localhost'),
