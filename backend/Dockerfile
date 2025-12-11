@@ -21,6 +21,10 @@ RUN mkdir -p public/uploads
 # Build de Strapi
 RUN npm run build
 
+# Copiar script de inicio
+COPY start.sh /app/start.sh
+RUN chmod +x /app/start.sh
+
 # Exponer puerto (Railway inyecta PORT automáticamente)
 EXPOSE ${PORT:-1337}
 
@@ -28,6 +32,6 @@ EXPOSE ${PORT:-1337}
 ENV NODE_ENV=production
 ENV HOST=0.0.0.0
 
-# Comando de inicio
-CMD ["npm", "start"]
+# Comando de inicio (usar script que muestra más información)
+CMD ["/app/start.sh"]
 
