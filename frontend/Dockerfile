@@ -21,9 +21,12 @@ WORKDIR /app
 ENV NODE_ENV=production
 
 # Copiar archivos necesarios para standalone
-COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
+
+# Copiar public si existe (Next.js standalone incluye public en .next/standalone)
+# Si no existe, crear directorio vacío
+RUN mkdir -p ./public || true
 
 # Exponer puerto
 EXPOSE 3000
