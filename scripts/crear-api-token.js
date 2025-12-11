@@ -33,7 +33,22 @@ async function loginAdmin() {
     if (!response.ok) {
       const errorText = await response.text();
       console.error(`\n❌ Error de login (${response.status}): ${errorText}`);
-      console.error('\n💡 Verifica tus credenciales de administrador');
+      
+      if (response.status === 500) {
+        console.error('\n⚠️  Error 500 - Problema en el servidor');
+        console.error('💡 Posibles causas:');
+        console.error('   1. PostgreSQL no está configurado correctamente');
+        console.error('   2. El servidor está teniendo problemas internos');
+        console.error('   3. Revisa los logs de Railway para más detalles');
+        console.error('\n🔍 Verifica en Railway:');
+        console.error('   - ¿El servicio Backend está corriendo?');
+        console.error('   - ¿PostgreSQL está conectado?');
+        console.error('   - ¿Las variables de entorno están configuradas?');
+      } else if (response.status === 401 || response.status === 400) {
+        console.error('\n💡 Verifica tus credenciales de administrador');
+        console.error('   Email:', ADMIN_EMAIL);
+      }
+      
       throw new Error(`Login failed: ${response.status}`);
     }
 
