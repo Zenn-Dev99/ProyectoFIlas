@@ -8,8 +8,22 @@ export default {
    *
    * This gives you an opportunity to extend code.
    */
-  register(/* { strapi }: { strapi: Core.Strapi } */) {
+  register({ strapi }: { strapi: Core.Strapi }) {
     console.log('📝 Register function ejecutada');
+    
+    // Manejar errores no capturados para evitar que el proceso se cierre
+    process.on('unhandledRejection', (reason, promise) => {
+      console.error('❌ Unhandled Rejection:', reason);
+      console.error('   Promise:', promise);
+      // No salir del proceso, solo loguear
+    });
+
+    process.on('uncaughtException', (error) => {
+      console.error('❌ Uncaught Exception:', error);
+      console.error('   Mensaje:', error.message);
+      console.error('   Stack:', error.stack);
+      // No salir del proceso, solo loguear
+    });
   },
 
   /**
