@@ -19,7 +19,10 @@ export default {
    */
   async bootstrap({ strapi }: { strapi: Core.Strapi }) {
     try {
+      console.log('🔧 Iniciando bootstrap de Strapi...');
+      
       // Registrar ruta personalizada de login
+      console.log('📝 Registrando ruta personalizada de login...');
       strapi.server.routes([
         {
           method: 'POST',
@@ -30,6 +33,7 @@ export default {
           },
         },
       ]);
+      console.log('✅ Ruta de login registrada');
 
       // Seed automático deshabilitado - usar seed manual cuando sea necesario
       // await seedOnBootstrap(strapi);
@@ -45,13 +49,23 @@ export default {
         const db = strapi.db;
         if (db) {
           console.log('✅ Base de datos conectada');
+          // Intentar una query simple para verificar
+          await db.connection.raw('SELECT 1');
+          console.log('✅ Query de prueba a BD exitosa');
         }
-      } catch (dbError) {
+      } catch (dbError: any) {
         console.error('❌ Error al verificar conexión a BD:', dbError);
+        console.error('   Mensaje:', dbError?.message);
+        console.error('   Stack:', dbError?.stack);
+        // No lanzar el error, solo loguearlo
       }
-    } catch (error) {
+      
+      console.log('✅ Bootstrap completado exitosamente');
+    } catch (error: any) {
       console.error('❌ Error en bootstrap:', error);
-      throw error;
+      console.error('   Mensaje:', error?.message);
+      console.error('   Stack:', error?.stack);
+      // No lanzar el error para que Strapi pueda continuar
     }
   },
 };

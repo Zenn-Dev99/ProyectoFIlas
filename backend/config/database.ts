@@ -64,24 +64,34 @@ export default ({ env }) => {
   };
 
   // Log de configuración para debug
-  if (process.env.NODE_ENV === 'production') {
-    console.log('🔍 Configuración de Base de Datos:');
-    console.log(`   Client: ${client}`);
-    if (client === 'postgres') {
-      if (env('DATABASE_URL')) {
-        console.log('   ✅ DATABASE_URL encontrado');
-        // No mostrar la URL completa por seguridad, solo indicar que existe
-        const dbUrl = env('DATABASE_URL');
-        if (dbUrl) {
-          const urlObj = new URL(dbUrl);
-          console.log(`   Host: ${urlObj.hostname}`);
-          console.log(`   Database: ${urlObj.pathname.replace('/', '')}`);
-        }
-      } else {
-        console.log('   ⚠️  DATABASE_URL no encontrado');
-        console.log('   Usando configuración individual');
+  console.log('🔍 Configuración de Base de Datos:');
+  console.log(`   Client: ${client}`);
+  console.log(`   NODE_ENV: ${process.env.NODE_ENV || 'development'}`);
+  
+  if (client === 'postgres') {
+    const dbUrl = env('DATABASE_URL');
+    if (dbUrl) {
+      console.log('   ✅ DATABASE_URL encontrado');
+      try {
+        const urlObj = new URL(dbUrl);
+        console.log(`   Host: ${urlObj.hostname}`);
+        console.log(`   Port: ${urlObj.port || '5432'}`);
+        console.log(`   Database: ${urlObj.pathname.replace('/', '') || 'railway'}`);
+        console.log(`   User: ${urlObj.username || 'postgres'}`);
+      } catch (urlError) {
+        console.error('   ⚠️  Error al parsear DATABASE_URL:', urlError);
+        console.log('   DATABASE_URL (primeros 50 chars):', dbUrl.substring(0, 50) + '...');
       }
+    } else {
+      console.log('   ⚠️  DATABASE_URL no encontrado');
+      console.log('   Variables disponibles:');
+      console.log(`   DATABASE_CLIENT: ${env('DATABASE_CLIENT')}`);
+      console.log(`   DATABASE_HOST: ${env('DATABASE_HOST')}`);
+      console.log(`   DATABASE_NAME: ${env('DATABASE_NAME')}`);
+      console.log('   Usando configuración individual');
     }
+  } else {
+    console.log(`   Usando ${client} (desarrollo local)`);
   }
 
   return {
