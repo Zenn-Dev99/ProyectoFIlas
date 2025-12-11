@@ -1,0 +1,56 @@
+name: Deploy to Railway
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      backend: ${{ steps.filter.outputs.backend }}
+      frontend: ${{ steps.filter.outputs.frontend }}
+    steps:
+      - uses: actions/checkout@v3
+      
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            backend:
+              - 'backend/**'
+              - 'backend/railway.json'
+            frontend:
+              - 'frontend/**'
+              - 'railway.json'
+              - 'frontend/package.json'
+
+  deploy-backend:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.backend == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Deploy Backend to Railway
+        uses: bervProject/railway-deploy@v3.3.0
+        with:
+          railway_token: ${{ secrets.RAILWAY_TOKEN }}
+          service: 'backend'  # Nombre de tu servicio backend en Railway
+          detach: false
+
+  deploy-frontend:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.frontend == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Deploy Frontend to Railway
+        uses: bervProject/railway-deploy@v3.3.0
+        with:
+          railway_token: ${{ secrets.RAILWAY_TOKEN }}
+          service: 'frontend'  # Nombre de tu servicio frontend en Railway
+          detach: false
+
