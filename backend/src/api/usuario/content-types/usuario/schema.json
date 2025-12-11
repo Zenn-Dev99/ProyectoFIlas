@@ -46,6 +46,11 @@
       "relation": "manyToOne",
       "target": "api::sucursal.sucursal"
     },
+    "cajera": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::cajera.cajera"
+    },
     "activo": {
       "type": "boolean",
       "default": true

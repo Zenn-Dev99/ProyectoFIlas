@@ -44,6 +44,12 @@
     },
     "notas": {
       "type": "text"
+    },
+    "turnos": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::turno.turno",
+      "mappedBy": "orden"
     }
   }
 }

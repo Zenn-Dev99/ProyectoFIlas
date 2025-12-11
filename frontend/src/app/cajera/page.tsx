@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { getTurnos, actualizarTurno, obtenerSucursalPorDefecto, obtenerCajeras, fetchAPI } from "@/lib/strapi";
+import { getTurnos, actualizarTurno, obtenerSucursalPorDefecto, obtenerCajeras, fetchAPI, incrementarTurnoActual } from "@/lib/strapi";
 import { notificarTurnoLlamado } from "@/lib/whatsapp";
 import CajeraSkeleton from "@/components/skeletons/CajeraSkeleton";
 
@@ -20,13 +20,21 @@ interface Cajera {
   codigo: string;
 }
 
+interface Orden {
+  id: number;
+  numeroOrden: string;
+  total?: number;
+  estado?: string;
+}
+
 interface Turno {
   id: number;
   documentId?: string; // Agregar documentId al tipo
   numero: number;
   cliente: Cliente;
   tipo: "retiro" | "compra" | "devolucion";
-  ordenId?: string;
+  orden?: Orden | null; // Usar relación orden en lugar de ordenId
+  ordenId?: string; // Mantener para compatibilidad con datos antiguos
   estado: "pendiente" | "en-atencion" | "atendido" | "ausente";
   tiempoEstimado: number;
   posicionEnFila: number;
@@ -62,10 +70,11 @@ export default function CajeraPage() {
     retiro: true,
     devolucion: true,
   });
-  const [mostrarSoloMisTurnos, setMostrarSoloMisTurnos] = useState(false);
   const [filtroTipo, setFiltroTipo] = useState<TipoFiltro>("todos");
   const [loading, setLoading] = useState(true);
   const [tiempoEnTurno, setTiempoEnTurno] = useState<string>("00:00");
+  const [siguienteTurno, setSiguienteTurno] = useState<Turno | null>(null);
+  const [tiempoPromedioAtencion, setTiempoPromedioAtencion] = useState<string>("00:00");
 
   const calcularTiempoEnTurno = (fechaInicio: string) => {
     const inicio = new Date(fechaInicio);
@@ -152,6 +161,36 @@ export default function CajeraPage() {
           } else {
             setTurnoActual(null);
             setTiempoEnTurno("00:00");
+          }
+
+          // Obtener siguiente turno pendiente (sin cajera asignada o asignado a esta cajera)
+          const pendientes = turnosFiltradosPorTipo.filter(
+            (t: Turno) => t.estado === "pendiente" && (!t.cajera || t.cajera.id === cajeraId)
+          );
+          if (pendientes.length > 0) {
+            setSiguienteTurno(pendientes[0]);
+          } else {
+            setSiguienteTurno(null);
+          }
+
+          // Calcular tiempo promedio de atención
+          const turnosAtendidos = turnosFiltradosPorTipo.filter(
+            (t: Turno) => t.estado === "atendido" && t.cajera?.id === cajeraId && (t as any).fechaInicioAtencion && (t as any).fechaFinAtencion
+          );
+          
+          if (turnosAtendidos.length > 0) {
+            const tiemposAtencion = turnosAtendidos.map((t: any) => {
+              const inicio = new Date(t.fechaInicioAtencion);
+              const fin = new Date(t.fechaFinAtencion);
+              return fin.getTime() - inicio.getTime();
+            });
+            
+            const promedioMs = tiemposAtencion.reduce((a, b) => a + b, 0) / tiemposAtencion.length;
+            const promedioMinutos = Math.floor(promedioMs / 60000);
+            const promedioSegundos = Math.floor((promedioMs % 60000) / 1000);
+            setTiempoPromedioAtencion(`${String(promedioMinutos).padStart(2, '0')}:${String(promedioSegundos).padStart(2, '0')}`);
+          } else {
+            setTiempoPromedioAtencion("00:00");
           }
         }
       }
@@ -266,21 +305,76 @@ export default function CajeraPage() {
     }
   };
 
-  const marcarAtendido = async (turnoId: number | string) => {
+  const marcarAtendido = async (turnoId: number | string, avanzarAutomatico: boolean = false) => {
     try {
+      // Obtener el turno para saber a qué sucursal pertenece
+      const turnoParaActualizar = turnoActual?.id === turnoId ? turnoActual : turnos.find(t => t.id === turnoId);
+      
       // Actualizar estado en Strapi
       await actualizarTurno(turnoId, {
         estado: "atendido",
         fechaFinAtencion: new Date().toISOString(),
       });
 
+      // Incrementar el turno actual de la sucursal
+      if (sucursalId && turnoParaActualizar) {
+        try {
+          await incrementarTurnoActual(sucursalId);
+          console.log(`✅ Turno actual de sucursal incrementado`);
+        } catch (error) {
+          console.warn("Error al incrementar turno actual de sucursal:", error);
+          // Continuar aunque falle la actualización del contador
+        }
+      }
+
       // Limpiar turno actual si es el que se marcó
       if (turnoActual?.id === turnoId) {
         setTurnoActual(null);
       }
 
-      // Recargar datos
-      await cargarDatos();
+      // Si se debe avanzar automáticamente, llamar al siguiente turno
+      if (avanzarAutomatico) {
+        // Recargar datos primero para obtener el nuevo siguiente turno
+        const configStr = localStorage.getItem("cajeraConfig");
+        if (configStr) {
+          const config: CajeraConfig = JSON.parse(configStr);
+          await cargarDatos(config.cajeraId);
+          
+          // Esperar un momento para que se actualice el estado y luego obtener el siguiente turno
+          setTimeout(async () => {
+            const sucursal = await obtenerSucursalPorDefecto();
+            if (sucursal) {
+              const data = await getTurnos(sucursal.id);
+              const turnosData = data.data || [];
+              const turnosConIds = turnosData.map((t: any) => ({
+                ...t,
+                id: t.id || t.documentId || t._id,
+                documentId: t.documentId || t.id,
+              })).filter((t: any) => t.id);
+              
+              const turnosFiltradosPorTipo = turnosConIds.filter((t: Turno) => {
+                if (t.tipo === "compra" && !config.tiposServicio.compra) return false;
+                if (t.tipo === "retiro" && !config.tiposServicio.retiro) return false;
+                if (t.tipo === "devolucion" && !config.tiposServicio.devolucion) return false;
+                return true;
+              });
+              
+              const pendientes = turnosFiltradosPorTipo.filter(
+                (t: Turno) => t.estado === "pendiente" && (!t.cajera || t.cajera.id === config.cajeraId)
+              );
+              
+              if (pendientes.length > 0) {
+                await llamarTurno(pendientes[0]);
+              }
+            }
+          }, 800);
+        } else {
+          await cargarDatos();
+        }
+      } else {
+        // Recargar datos normalmente
+        await cargarDatos();
+      }
     } catch (error) {
       console.error("Error al marcar como atendido:", error);
       alert("Error al marcar como atendido. Por favor, intenta nuevamente.");
@@ -289,18 +383,19 @@ export default function CajeraPage() {
 
   // Filtrar turnos según los filtros aplicados
   // Los turnos ya vienen filtrados por tipo de servicio desde cargarDatos
-  let turnosFiltrados = turnos.filter((t) => t.estado === "pendiente");
+  // IMPORTANTE: Solo mostrar turnos pendientes que NO tienen cajera asignada o están asignados a la cajera actual
+  let turnosFiltrados = turnos.filter((t) => {
+    if (t.estado !== "pendiente") return false;
+    // Solo mostrar turnos sin cajera asignada o asignados a la cajera actual
+    if (cajeraActual) {
+      return !t.cajera || t.cajera.id === cajeraActual.id;
+    }
+    return !t.cajera; // Si no hay cajera actual, solo mostrar sin asignar
+  });
 
   // Filtrar por tipo de servicio adicional (si el usuario quiere ver solo uno)
   if (filtroTipo !== "todos") {
     turnosFiltrados = turnosFiltrados.filter((t) => t.tipo === filtroTipo);
-  }
-
-  // Filtrar por cajera si está activo
-  if (mostrarSoloMisTurnos && cajeraActual) {
-    turnosFiltrados = turnosFiltrados.filter(
-      (t) => !t.cajera || t.cajera.id === cajeraActual.id
-    );
   }
 
   const tipoLabels = {
@@ -358,15 +453,6 @@ export default function CajeraPage() {
               >
                 🛑 Finalizar Turno
               </button>
-              <label className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  checked={mostrarSoloMisTurnos}
-                  onChange={(e) => setMostrarSoloMisTurnos(e.target.checked)}
-                  className="w-4 h-4"
-                />
-                <span className="text-sm">Solo mis turnos</span>
-              </label>
             </div>
           </div>
 
@@ -429,9 +515,25 @@ export default function CajeraPage() {
             </div>
           </div>
 
+        {/* Estadísticas de Tiempo */}
+        <div className="bg-gradient-to-r from-purple-100 to-blue-100 border-2 border-purple-300 rounded-lg p-6 mb-6">
+          <h2 className="text-xl font-semibold mb-4 text-gray-800">📊 Estadísticas de Tiempo</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="bg-white rounded-lg p-4 shadow">
+              <p className="text-sm text-gray-600 mb-1">Tiempo en Turno Actual</p>
+              <p className="text-3xl font-bold text-blue-600 font-mono">{tiempoEnTurno}</p>
+            </div>
+            <div className="bg-white rounded-lg p-4 shadow">
+              <p className="text-sm text-gray-600 mb-1">Tiempo Promedio de Atención</p>
+              <p className="text-3xl font-bold text-purple-600 font-mono">{tiempoPromedioAtencion}</p>
+              <p className="text-xs text-gray-500 mt-1">Basado en turnos atendidos hoy</p>
+            </div>
+          </div>
+        </div>
+
         {/* Turno Actual */}
         {turnoActual && turnoActual.cajera?.id === cajeraActual?.id && (
-          <div className="bg-blue-100 border-2 border-blue-500 rounded-lg p-6 mb-8">
+          <div className="bg-blue-100 border-2 border-blue-500 rounded-lg p-6 mb-6">
             <div className="flex justify-between items-start mb-4">
               <div>
                 <h2 className="text-2xl font-semibold">Turno en Atención</h2>
@@ -469,20 +571,65 @@ export default function CajeraPage() {
                       {tipoLabels[turnoActual.tipo] || turnoActual.tipo}
                     </span>
                   </p>
-                  {turnoActual.ordenId && (
+                  {(turnoActual.orden?.numeroOrden || turnoActual.ordenId) && (
                     <p className="text-lg">
                       <strong>Número de Orden:</strong>{" "}
                       <span className="font-mono bg-white px-2 py-1 rounded">
-                        {turnoActual.ordenId}
+                        {turnoActual.orden?.numeroOrden || turnoActual.ordenId}
                       </span>
                     </p>
                   )}
                 </div>
                 <button
-                  onClick={() => marcarAtendido(turnoActual.id)}
+                  onClick={() => marcarAtendido(turnoActual.id, true)}
                   className="w-full bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 font-semibold text-lg"
                 >
-                  ✅ Marcar como Atendido
+                  ✅ Marcar como Atendido y Avanzar
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Siguiente Turno */}
+        {!turnoActual && siguienteTurno && (
+          <div className="bg-green-50 border-2 border-green-400 rounded-lg p-6 mb-6">
+            <h2 className="text-2xl font-semibold mb-4 text-gray-800">⏭️ Siguiente Turno</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <div className="mb-4">
+                  <span className="text-5xl font-bold text-green-600">#{siguienteTurno.numero}</span>
+                </div>
+                <div className="space-y-2">
+                  <p className="text-lg">
+                    <strong>Cliente:</strong> {siguienteTurno.cliente.nombre}
+                  </p>
+                  <p className="text-lg">
+                    <strong>Teléfono:</strong> {siguienteTurno.cliente.telefono}
+                  </p>
+                  <p className="text-lg">
+                    <strong>Tipo:</strong>{" "}
+                    <span className={`capitalize px-3 py-1 rounded ${tipoColors[siguienteTurno.tipo]}`}>
+                      {tipoLabels[siguienteTurno.tipo] || siguienteTurno.tipo}
+                    </span>
+                  </p>
+                  {(siguienteTurno.orden?.numeroOrden || siguienteTurno.ordenId) && (
+                    <p className="text-lg">
+                      <strong>Número de Orden:</strong>{" "}
+                      <span className="font-mono bg-white px-2 py-1 rounded">
+                        {siguienteTurno.orden?.numeroOrden || siguienteTurno.ordenId}
+                      </span>
+                    </p>
+                  )}
+                </div>
+              </div>
+              <div className="flex items-center justify-center">
+                <button
+                  onClick={() => llamarTurno(siguienteTurno)}
+                  disabled={!cajeraActual}
+                  className="w-full bg-green-600 text-white px-6 py-4 rounded-lg hover:bg-green-700 font-semibold text-xl disabled:bg-gray-400 disabled:cursor-not-allowed"
+                >
+                  📢 Llamar Siguiente Turno
                 </button>
               </div>
             </div>
@@ -548,10 +695,10 @@ export default function CajeraPage() {
                     </div>
 
                     <div className="border-t pt-2 mb-3">
-                      {turno.ordenId && (
+                      {(turno.orden?.numeroOrden || turno.ordenId) && (
                         <p className="text-sm text-gray-600 mb-1">
                           <strong>Orden:</strong>{" "}
-                          <span className="font-mono">{turno.ordenId}</span>
+                          <span className="font-mono">{turno.orden?.numeroOrden || turno.ordenId}</span>
                         </p>
                       )}
                       <p className="text-xs text-gray-500">
@@ -559,22 +706,16 @@ export default function CajeraPage() {
                       </p>
                     </div>
 
-                    {asignadoAOtraCajera ? (
-                      <div className="w-full bg-yellow-200 text-yellow-800 px-4 py-2 rounded-lg text-sm text-center">
-                        Asignado a {turno.cajera?.nombre || 'otra cajera'}
-                      </div>
-                    ) : (
-                      <button
-                        onClick={() => {
-                          console.log("Llamando turno:", turno);
-                          llamarTurno(turno);
-                        }}
-                        disabled={!cajeraActual}
-                        className="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-semibold disabled:bg-gray-400 disabled:cursor-not-allowed"
-                      >
-                        📢 Llamar Turno
-                      </button>
-                    )}
+                    <button
+                      onClick={() => {
+                        console.log("Llamando turno:", turno);
+                        llamarTurno(turno);
+                      }}
+                      disabled={!cajeraActual}
+                      className="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-semibold disabled:bg-gray-400 disabled:cursor-not-allowed"
+                    >
+                      📢 Llamar Turno
+                    </button>
                   </div>
                 );
               })}

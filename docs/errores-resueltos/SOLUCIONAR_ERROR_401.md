@@ -127,3 +127,4 @@ Si faltan, agrégalas y reinicia el servicio.
 - [ ] Las variables de entorno están configuradas
 - [ ] El servicio está corriendo en Railway
 
+

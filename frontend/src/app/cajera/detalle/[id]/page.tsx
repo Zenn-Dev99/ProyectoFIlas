@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { getTurnoById, actualizarTurno, obtenerOrdenPorNumero } from "@/lib/strapi";
+import { getTurnoById, actualizarTurno, obtenerOrdenPorNumero, obtenerSucursalPorDefecto, incrementarTurnoActual } from "@/lib/strapi";
 import DetalleTurnoSkeleton from "@/components/skeletons/DetalleTurnoSkeleton";
 
 interface Cliente {
@@ -22,6 +22,12 @@ interface Orden {
   notas?: string;
 }
 
+interface Sucursal {
+  id: number;
+  nombre: string;
+  turnoActual?: number;
+}
+
 interface Turno {
   id: number;
   numero: number;
@@ -31,6 +37,7 @@ interface Turno {
   estado: string;
   fechaCreacion: string;
   orden?: Orden | null;
+  sucursal?: Sucursal | null;
 }
 
 export default function DetalleTurnoPage() {
@@ -50,8 +57,8 @@ export default function DetalleTurnoPage() {
         throw new Error("Turno no encontrado");
       }
 
-      // Si tiene ordenId, buscar la orden
-      if (turnoData.ordenId) {
+      // Si tiene ordenId pero no la relación orden, buscar la orden
+      if (turnoData.ordenId && !turnoData.orden) {
         try {
           const orden = await obtenerOrdenPorNumero(turnoData.ordenId);
           if (orden) {
@@ -85,6 +92,27 @@ export default function DetalleTurnoPage() {
         estado: "atendido",
         fechaFinAtencion: new Date().toISOString(),
       });
+
+      // Incrementar el turno actual de la sucursal
+      if (turno.sucursal?.id) {
+        try {
+          await incrementarTurnoActual(turno.sucursal.id);
+          console.log(`✅ Turno actual de sucursal incrementado`);
+        } catch (error) {
+          console.warn("Error al incrementar turno actual de sucursal:", error);
+          // Continuar aunque falle la actualización del contador
+        }
+      } else {
+        // Si no hay sucursal en el turno, obtenerla por defecto
+        try {
+          const sucursal = await obtenerSucursalPorDefecto();
+          if (sucursal) {
+            await incrementarTurnoActual(sucursal.id);
+          }
+        } catch (error) {
+          console.warn("Error al incrementar turno actual de sucursal:", error);
+        }
+      }
 
       // Redirigir al panel de cajera
       router.push("/cajera");
@@ -203,11 +231,11 @@ export default function DetalleTurnoPage() {
                   {new Date(turno.fechaCreacion).toLocaleString("es-ES")}
                 </p>
               </div>
-              {turno.ordenId && (
+              {(turno.orden?.numeroOrden || turno.ordenId) && (
                 <div>
                   <label className="text-sm font-medium text-gray-600">Número de Orden</label>
                   <p className="text-lg font-mono font-semibold text-gray-800">
-                    {turno.ordenId}
+                    {turno.orden?.numeroOrden || turno.ordenId}
                   </p>
                 </div>
               )}
@@ -300,10 +328,10 @@ export default function DetalleTurnoPage() {
               Este turno es para procesar una devolución. Por favor, verifica los productos y
               procesa la devolución según las políticas de la tienda.
             </p>
-            {turno.ordenId && (
+            {(turno.orden?.numeroOrden || turno.ordenId) && (
               <div className="mt-4">
                 <label className="text-sm font-medium text-orange-800">
-                  Orden Original: {turno.ordenId}
+                  Orden Original: {turno.orden?.numeroOrden || turno.ordenId}
                 </label>
               </div>
             )}

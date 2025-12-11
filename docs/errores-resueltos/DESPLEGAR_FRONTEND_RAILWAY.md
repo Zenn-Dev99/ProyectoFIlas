@@ -185,3 +185,4 @@ Una vez que el frontend esté desplegado, tendrás:
 3. **Probar todas las funcionalidades**
 4. **Configurar datos iniciales** en Strapi (sucursales, cajeras, etc.)
 
+

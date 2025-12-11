@@ -31,3 +31,4 @@ NOTAS:
   de tu servicio backend en Railway
 - Puedes encontrar la URL en Railway → Tu Servicio Backend → Settings → Domains
 
+

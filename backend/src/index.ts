@@ -1,4 +1,5 @@
 import type { Core } from '@strapi/strapi';
+import seedOnBootstrap from './bootstrap/seed';
 
 export default {
   /**
@@ -28,5 +29,8 @@ export default {
         },
       },
     ]);
+
+    // Ejecutar seed automático si está habilitado
+    await seedOnBootstrap(strapi);
   },
 };

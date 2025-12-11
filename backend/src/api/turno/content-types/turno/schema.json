@@ -34,8 +34,11 @@
       "enum": ["retiro", "compra", "devolucion"],
       "required": true
     },
-    "ordenId": {
-      "type": "string"
+    "orden": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::orden.orden",
+      "inversedBy": "turnos"
     },
     "estado": {
       "type": "enumeration",

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { QRCodeSVG } from "qrcode.react";
 import TVSkeleton from "@/components/skeletons/TVSkeleton";
+import { obtenerSucursalPorDefecto, getPublicidades } from "@/lib/strapi";
 
 interface Publicidad {
   id: string;
@@ -26,27 +27,46 @@ export default function TVPage() {
   const whatsappUrl = `https://wa.me/${numeroLimpio}?text=${mensajeInicial}`;
 
   useEffect(() => {
-    // TODO: Conectar con API de Strapi para obtener turno actual
-    // Simulación
-    setTurnoActual(5);
+    const cargarDatos = async () => {
+      try {
+        // Obtener sucursal por defecto y su turno actual
+        const sucursal = await obtenerSucursalPorDefecto();
+        if (sucursal) {
+          setTurnoActual(sucursal.turnoActual || 0);
+        }
 
-    // TODO: Obtener publicidades de Strapi
-    const mockPublicidades: Publicidad[] = [
-      {
-        id: "1",
-        titulo: "Oferta Especial",
-        imagen: "/api/placeholder/800/400",
-        descripcion: "Descuentos increíbles esta semana",
-      },
-      {
-        id: "2",
-        titulo: "Nuevos Productos",
-        imagen: "/api/placeholder/800/400",
-        descripcion: "Descubre nuestra nueva colección",
-      },
-    ];
-    setPublicidades(mockPublicidades);
-    setLoading(false);
+        // Obtener publicidades de Strapi
+        try {
+          const publicidadesData = await getPublicidades();
+          if (publicidadesData && publicidadesData.data) {
+            setPublicidades(publicidadesData.data);
+          }
+        } catch (error) {
+          console.warn("Error al cargar publicidades:", error);
+          // Si falla, usar array vacío
+          setPublicidades([]);
+        }
+      } catch (error) {
+        console.error("Error al cargar datos:", error);
+        setTurnoActual(0);
+        setPublicidades([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    cargarDatos();
+
+    // Actualizar cada 3 segundos para mostrar el turno actual en tiempo real
+    const interval = setInterval(() => {
+      obtenerSucursalPorDefecto().then((sucursal) => {
+        if (sucursal) {
+          setTurnoActual(sucursal.turnoActual || 0);
+        }
+      }).catch(console.error);
+    }, 3000);
+
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {

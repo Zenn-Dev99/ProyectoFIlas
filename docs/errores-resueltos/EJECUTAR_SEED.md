@@ -84,3 +84,4 @@ ADMIN_PASSWORD=Admin123!
 - Asegúrate de que el usuario admin tenga permisos para crear contenido
 - Revisa los logs para ver errores específicos
 
+

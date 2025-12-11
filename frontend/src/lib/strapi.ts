@@ -189,6 +189,42 @@ export async function obtenerCajeras(sucursalId: number) {
   return data.data || [];
 }
 
+export async function actualizarSucursal(sucursalId: number, sucursalData: any) {
+  try {
+    const response = await fetchAPI(`/sucursales/${sucursalId}`, {
+      method: 'PUT',
+      body: JSON.stringify({ data: sucursalData }),
+    });
+    return response;
+  } catch (error) {
+    console.error(`Error al actualizar sucursal ${sucursalId}:`, error);
+    throw error;
+  }
+}
+
+export async function incrementarTurnoActual(sucursalId: number) {
+  try {
+    // Obtener la sucursal actual
+    const sucursal = await obtenerSucursalPorId(sucursalId);
+    if (!sucursal) {
+      throw new Error(`Sucursal con ID ${sucursalId} no encontrada`);
+    }
+
+    // Incrementar el turno actual
+    const nuevoTurnoActual = (sucursal.turnoActual || 0) + 1;
+    
+    // Actualizar la sucursal
+    await actualizarSucursal(sucursalId, {
+      turnoActual: nuevoTurnoActual,
+    });
+
+    return nuevoTurnoActual;
+  } catch (error) {
+    console.error(`Error al incrementar turno actual de sucursal ${sucursalId}:`, error);
+    throw error;
+  }
+}
+
 export async function obtenerCajera(cajeraId: number) {
   return fetchAPI(`/cajeras/${cajeraId}?populate=*`);
 }

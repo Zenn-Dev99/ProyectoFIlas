@@ -213,6 +213,7 @@ async function seed() {
         telefono: '+56912345678',
         activa: true,
         tiempoPromedioAtencion: 5,
+        turnoActual: 1, // Iniciar en el turno 1
       });
       await publicarItem('sucursales', sucursal1.id);
       console.log(`✅ Sucursal creada: ${sucursal1.nombre} (ID: ${sucursal1.id})`);
@@ -224,6 +225,7 @@ async function seed() {
         telefono: '+56987654321',
         activa: true,
         tiempoPromedioAtencion: 7,
+        turnoActual: 1, // Iniciar en el turno 1
       });
       await publicarItem('sucursales', sucursal2.id);
       console.log(`✅ Sucursal creada: ${sucursal2.nombre} (ID: ${sucursal2.id})`);
@@ -406,7 +408,7 @@ async function seed() {
           cliente: cliente2.id,
           sucursal: sucursal1.id,
           tipo: 'retiro',
-          ordenId: orden1 ? orden1.numeroOrden : 'ORD-001',
+          orden: orden1 ? orden1.id : null, // Usar relación orden, no ordenId
           estado: 'pendiente',
           tiempoEstimado: 7,
           posicionEnFila: 2,

@@ -102,3 +102,4 @@ https://tu-frontend-production.up.railway.app
 3. Intenta refrescar la página de Railway
 4. Verifica que tengas permisos en el proyecto
 
+

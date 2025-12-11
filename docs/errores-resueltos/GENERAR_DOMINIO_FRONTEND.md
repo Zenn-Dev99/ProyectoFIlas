@@ -118,3 +118,4 @@ Una vez que el dominio esté generado y funcionando, tendrás:
 3. **Probar todas las funcionalidades**
 4. **Configurar datos iniciales** en Strapi (sucursales, cajeras, etc.)
 
+

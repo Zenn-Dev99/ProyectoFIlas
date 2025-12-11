@@ -127,3 +127,4 @@ No te preocupes, puedes:
 - **Frontend:** Variables en **Servicio Frontend → Variables**
 - **NO uses Project Variables** a menos que ambos servicios necesiten la misma variable
 
+

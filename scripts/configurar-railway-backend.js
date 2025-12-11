@@ -43,3 +43,4 @@ console.log('- CORS_ORIGIN puede ser * o la URL de tu frontend');
 console.log('- Guarda estas claves de forma segura');
 console.log('============================================\n');
 
+

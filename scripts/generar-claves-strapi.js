@@ -19,3 +19,4 @@ console.log('TRANSFER_TOKEN_SALT=' + generarClave());
 console.log('JWT_SECRET=' + generarClave());
 console.log('\n💡 Copia estas variables a Railway en la sección de Variables de Entorno\n');
 
+

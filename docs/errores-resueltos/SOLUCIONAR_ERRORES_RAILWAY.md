@@ -142,3 +142,4 @@ JWT_SECRET=...
 - **Verifica el Root Directory** es el error más común
 - **Las variables de entorno son críticas** para Strapi
 
+
