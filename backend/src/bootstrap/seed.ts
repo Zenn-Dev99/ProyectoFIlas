@@ -20,28 +20,28 @@ const USUARIOS_PRUEBA = [
     password: 'admin123',
     email: 'jefe.general@test.com',
     nombre: 'Administrador General',
-    rol: 'jefe_general',
+    rol: 'jefe_general' as const,
   },
   {
     username: 'jefe_sucursal_1',
     password: 'jefe123',
     email: 'jefe.sucursal@test.com',
     nombre: 'Jefe Sucursal 1',
-    rol: 'jefe_sucursal',
+    rol: 'jefe_sucursal' as const,
   },
   {
     username: 'cajera_1',
     password: 'cajera123',
     email: 'cajera1@test.com',
     nombre: 'María González',
-    rol: 'cajera',
+    rol: 'cajera' as const,
   },
   {
     username: 'cajera_2',
     password: 'cajera123',
     email: 'cajera2@test.com',
     nombre: 'Juan Pérez',
-    rol: 'cajera',
+    rol: 'cajera' as const,
   },
 ];
 
@@ -260,7 +260,7 @@ async function ejecutarSeed(strapi: Core.Strapi) {
         posicionEnFila: 2,
         fechaCreacion: fechaCreacion,
         publishedAt: new Date().toISOString(),
-      },
+      } as any, // Type assertion para evitar error de tipos generados
     });
     console.log(`✅ Turno creado: #${turno2.numero} - ${turno2.tipo} - ${cliente2.nombre}`);
 
@@ -303,9 +303,9 @@ async function ejecutarSeed(strapi: Core.Strapi) {
 
 export default async function seedOnBootstrap(strapi: Core.Strapi) {
   // Solo ejecutar en producción o cuando se especifique la variable de entorno
-  const ejecutarSeed = process.env.AUTO_SEED === 'true' || process.env.NODE_ENV === 'production';
+  const debeEjecutarSeed = process.env.AUTO_SEED === 'true' || process.env.NODE_ENV === 'production';
   
-  if (!ejecutarSeed) {
+  if (!debeEjecutarSeed) {
     console.log('⏭️ Seed automático deshabilitado (AUTO_SEED no está en "true" o NODE_ENV no es "production")');
     return;
   }
