@@ -21,8 +21,12 @@ RUN mkdir -p public/uploads
 # Build de Strapi
 RUN npm run build
 
-# Exponer puerto
-EXPOSE 1337
+# Exponer puerto (Railway inyecta PORT automáticamente)
+EXPOSE ${PORT:-1337}
+
+# Variables de entorno
+ENV NODE_ENV=production
+ENV HOST=0.0.0.0
 
 # Comando de inicio
 CMD ["npm", "start"]

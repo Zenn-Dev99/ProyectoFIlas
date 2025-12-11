@@ -32,5 +32,11 @@ export default {
 
     // Seed automático deshabilitado - usar seed manual cuando sea necesario
     // await seedOnBootstrap(strapi);
+
+    // Log de información del servidor
+    console.log('🚀 Strapi iniciado correctamente');
+    console.log(`📍 Host: ${strapi.config.get('server.host')}`);
+    console.log(`🔌 Port: ${strapi.config.get('server.port')}`);
+    console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
   },
 };
