@@ -33,7 +33,7 @@ export function SucursalProvider({ children }: { children: ReactNode }) {
     if (usuario) {
       cargarSucursales();
     }
-  }, [usuario]);
+  }, [usuario, cargarSucursales]);
 
   const cargarSucursales = async () => {
     try {

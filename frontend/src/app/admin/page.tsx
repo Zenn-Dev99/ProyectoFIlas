@@ -30,7 +30,7 @@ export default function AdminDashboard() {
       const interval = setInterval(cargarDatos, 10000);
       return () => clearInterval(interval);
     }
-  }, [sucursalSeleccionada, sucursalLoading]);
+  }, [sucursalSeleccionada, sucursalLoading, cargarDatos]);
 
   const cargarDatos = async () => {
     if (!sucursalSeleccionada) {
@@ -41,10 +41,10 @@ export default function AdminDashboard() {
     try {
       const sucursalId = sucursalSeleccionada.id;
 
-      const todasLasCajeras = await obtenerTodasLasCajeras(sucursal.id);
+      const todasLasCajeras = await obtenerTodasLasCajeras(sucursalId);
       const cajerasActivas = todasLasCajeras.filter((c: any) => c.activa).length;
 
-      const turnosData = await getTurnos(sucursal.id);
+      const turnosData = await getTurnos(sucursalId);
       const turnos = turnosData.data || [];
 
       const turnosPendientes = turnos.filter(

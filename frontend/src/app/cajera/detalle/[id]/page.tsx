@@ -43,7 +43,7 @@ export default function DetalleTurnoPage() {
 
   useEffect(() => {
     cargarTurno();
-  }, [turnoId]);
+  }, [turnoId, cargarTurno]);
 
   const cargarTurno = async () => {
     try {

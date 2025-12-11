@@ -41,7 +41,7 @@ export default function AdminTurnosPage() {
       const interval = setInterval(cargarTurnos, 5000);
       return () => clearInterval(interval);
     }
-  }, [sucursalSeleccionada, sucursalLoading]);
+  }, [sucursalSeleccionada, sucursalLoading, cargarTurnos]);
 
   const cargarTurnos = async () => {
     if (!sucursalSeleccionada) {

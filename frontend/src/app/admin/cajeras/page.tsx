@@ -24,7 +24,7 @@ export default function AdminCajerasPage() {
     if (!sucursalLoading && sucursalSeleccionada) {
       cargarCajeras();
     }
-  }, [sucursalSeleccionada, sucursalLoading]);
+  }, [sucursalSeleccionada, sucursalLoading, cargarCajeras]);
 
   const cargarCajeras = async () => {
     if (!sucursalSeleccionada) {

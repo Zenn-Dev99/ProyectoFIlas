@@ -48,7 +48,7 @@ export default function AdminEstadisticasPage() {
     if (!sucursalLoading && sucursalSeleccionada) {
       cargarEstadisticas();
     }
-  }, [sucursalSeleccionada, sucursalLoading]);
+  }, [sucursalSeleccionada, sucursalLoading, cargarEstadisticas]);
 
   const cargarEstadisticas = async () => {
     if (!sucursalSeleccionada) {

@@ -97,7 +97,7 @@ export default function CajeraPage() {
     }, 5000);
     
     return () => clearInterval(interval);
-  }, [router]);
+  }, [router, cargarDatos]);
 
   // Timer para mostrar tiempo en turno
   useEffect(() => {
