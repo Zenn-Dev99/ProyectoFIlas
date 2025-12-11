@@ -37,7 +37,7 @@ export function SucursalProvider({ children }: { children: ReactNode }) {
       // Filtrar según permisos del usuario
       let sucursalesDisponibles = sucursales;
       if (usuario?.rol === "jefe_sucursal" && usuario.sucursal) {
-        sucursalesDisponibles = sucursales.filter(s => s.id === usuario.sucursal!.id);
+        sucursalesDisponibles = sucursales.filter((s: Sucursal) => s.id === usuario.sucursal!.id);
       }
       
       setTodasLasSucursales(sucursalesDisponibles);
