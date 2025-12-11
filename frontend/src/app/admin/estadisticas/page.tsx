@@ -242,7 +242,7 @@ export default function AdminEstadisticasPage() {
                 </tr>
               </thead>
               <tbody>
-                {clientesFrecuentes.map((cliente, index) => (
+                {Array.isArray(clientesFrecuentes) && clientesFrecuentes.map((cliente, index) => (
                   <tr
                     key={cliente.id}
                     className="border-b border-gray-100 hover:bg-gray-50"
