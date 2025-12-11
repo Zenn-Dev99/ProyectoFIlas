@@ -23,7 +23,7 @@ export default factories.createCoreController('api::usuario.usuario', ({ strapi 
         return ctx.unauthorized('Invalid credentials');
       }
 
-      const usuario = usuarios[0];
+      const usuario = usuarios[0] as any;
 
       // Verificar contraseña (en producción debería estar hasheada)
       if (usuario.password !== password) {
@@ -48,8 +48,8 @@ export default factories.createCoreController('api::usuario.usuario', ({ strapi 
           nombre: usuario.nombre,
           rol: usuario.rol,
           activo: usuario.activo,
-          sucursal: usuario.sucursal,
-          cajera: usuario.cajera,
+          sucursal: usuario.sucursal || null,
+          cajera: usuario.cajera || null,
         },
       });
     } catch (error) {
