@@ -561,7 +561,7 @@ export default function CajeraPage() {
 
                     {asignadoAOtraCajera ? (
                       <div className="w-full bg-yellow-200 text-yellow-800 px-4 py-2 rounded-lg text-sm text-center">
-                        Asignado a {turno.cajera.nombre}
+                        Asignado a {turno.cajera?.nombre || 'otra cajera'}
                       </div>
                     ) : (
                       <button
