@@ -25,14 +25,37 @@ PostgreSQL en Railway es un servicio separado que persiste los datos incluso cua
 
 ### 2.1 En tu Servicio Backend:
 
-Ve a **Variables** y asegúrate de tener estas variables:
+Ve a **Variables** y configura:
+
+**IMPORTANTE:** Railway automáticamente inyecta `DATABASE_URL` cuando agregas PostgreSQL. Solo necesitas configurar:
 
 ```env
 # Base de datos (IMPORTANTE: usar postgres, no sqlite)
 DATABASE_CLIENT=postgres
 DATABASE_URL=${{Postgres.DATABASE_URL}}
+```
 
-# Otras variables de Strapi
+**Nota:** `${{Postgres.DATABASE_URL}}` es una referencia a la variable que Railway inyecta automáticamente. Si no ves esta variable, significa que PostgreSQL no está conectado al servicio.
+
+### 2.2 Conectar PostgreSQL al Servicio Backend:
+
+1. En Railway, haz clic en tu servicio **PostgreSQL**
+2. Ve a la pestaña **"Variables"**
+3. Busca `DATABASE_URL` y cópiala
+4. Ve a tu servicio **Backend** → **Variables**
+5. Agrega:
+   - **Nombre:** `DATABASE_URL`
+   - **Valor:** Pega el valor que copiaste
+   - **O usa la referencia:** `${{Postgres.DATABASE_URL}}`
+
+**O más fácil:**
+- Railway debería detectar automáticamente la conexión
+- Si no, en el servicio Backend, busca **"Connect"** o **"Add Service"** y selecciona PostgreSQL
+
+### 2.3 Otras Variables Necesarias:
+
+```env
+# Otras variables de Strapi (ya deberías tenerlas)
 NODE_ENV=production
 HOST=0.0.0.0
 PORT=${{PORT}}
@@ -45,10 +68,6 @@ TRANSFER_TOKEN_SALT=tu_transfer_token_salt_aqui
 JWT_SECRET=tu_jwt_secret_aqui
 ENCRYPTION_KEY=tu_encryption_key_aqui
 ```
-
-**⚠️ IMPORTANTE:**
-- `DATABASE_CLIENT=postgres` (no `sqlite`)
-- `DATABASE_URL=${{Postgres.DATABASE_URL}}` - Railway inyecta esto automáticamente cuando agregas PostgreSQL
 
 ---
 
@@ -69,24 +88,42 @@ Si ves errores de conexión, verifica que:
 
 ---
 
-## 🚫 Paso 4: Desactivar Seed Automático
+## 🚫 Paso 4: Seed Automático Desactivado
 
-El seed automático ya está deshabilitado en el código. Si quieres ejecutarlo manualmente:
+El seed automático **ya está deshabilitado** en el código. No se ejecutará automáticamente en cada deploy.
 
-### 4.1 Ejecutar Seed Manualmente:
+### 4.1 Ejecutar Seed Manualmente (Solo una vez):
+
+Después de configurar PostgreSQL, ejecuta el seed **una sola vez** para poblar los datos iniciales:
+
+**Opción A: Desde tu máquina local**
 
 ```bash
-# Desde tu máquina local o usando Railway CLI
-cd backend
-node ../scripts/seed-datos-prueba.js
-```
+# Configurar variables
+$env:STRAPI_URL="https://proyectofilas-production.up.railway.app"
+$env:STRAPI_API_TOKEN="tu_token_aqui"
 
-O usando las variables de entorno:
-```bash
-STRAPI_URL=https://proyectofilas-production.up.railway.app \
-STRAPI_API_TOKEN=tu_token_aqui \
+# Ejecutar seed
 node scripts/seed-datos-prueba.js
 ```
+
+**Opción B: Usando Railway CLI**
+
+```bash
+# Instalar Railway CLI
+npm install -g @railway/cli
+
+# Login
+railway login
+
+# Conectar al proyecto
+railway link
+
+# Ejecutar seed en el servicio backend
+railway run --service backend node ../scripts/seed-datos-prueba.js
+```
+
+**⚠️ IMPORTANTE:** Solo ejecuta el seed **una vez** después de configurar PostgreSQL. Los datos persistirán en todos los redeploys.
 
 ---
 
