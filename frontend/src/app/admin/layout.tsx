@@ -29,7 +29,7 @@ function AdminLayoutContent({
     if (!usuario) return false;
     if (usuario.rol === "jefe_general") return true;
     if (usuario.rol === "jefe_sucursal" && usuario.sucursal) {
-      return usuario.sucursal.id === sucursal.id;
+      return usuario.sucursal?.id === sucursal.id;
     }
     return false;
   });

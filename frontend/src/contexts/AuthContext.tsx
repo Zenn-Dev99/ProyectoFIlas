@@ -155,7 +155,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!usuario) return false;
     if (usuario.rol === "jefe_general") return true;
     if (usuario.rol === "jefe_sucursal" && usuario.sucursal) {
-      return usuario.sucursal.id === sucursalId;
+      return usuario.sucursal?.id === sucursalId;
     }
     return false;
   };
