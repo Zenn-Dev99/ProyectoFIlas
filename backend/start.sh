@@ -31,34 +31,42 @@ mkdir -p public/uploads || {
 }
 
 echo "✅ Directorio public/uploads creado"
-echo "🔧 Verificando que npm y node estén disponibles..."
-which node && node --version
-which npm && npm --version
+echo ""
+echo "🔧 Verificando entorno..."
+echo "   Node.js: $(node --version 2>&1 || echo 'NO ENCONTRADO')"
+echo "   npm: $(npm --version 2>&1 || echo 'NO ENCONTRADO')"
+echo "   Directorio actual: $(pwd)"
+echo "   Archivos en /app: $(ls -la /app 2>&1 | head -5)"
+echo ""
 echo "🔧 Ejecutando: npm start"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
 
-# Ejecutar Strapi
-# NO usar exec para poder capturar errores
-npm start 2>&1 &
-NPM_PID=$!
+# Forzar flush de output para que se vea inmediatamente
+echo "⏳ Iniciando Strapi (esto puede tardar unos segundos)..." >&2
 
-# Esperar un poco y verificar si el proceso sigue corriendo
-sleep 5
-if ! kill -0 $NPM_PID 2>/dev/null; then
-  echo "❌ npm start se detuvo después de 5 segundos"
-  echo "   Esperando 30 segundos para que puedas ver este mensaje..."
-  sleep 30
-  exit 1
-fi
+# Ejecutar Strapi y capturar output en tiempo real
+npm start 2>&1 | while IFS= read -r line; do
+  echo "$line"
+  # Si vemos un error crítico, mostrarlo claramente
+  if echo "$line" | grep -qi "error\|fatal\|cannot\|failed"; then
+    echo "⚠️ ERROR DETECTADO EN LOGS: $line" >&2
+  fi
+done
 
-# Si el proceso sigue corriendo, esperar a que termine
-wait $NPM_PID
-EXIT_CODE=$?
+EXIT_CODE=${PIPESTATUS[0]}
 
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 if [ $EXIT_CODE -ne 0 ]; then
   echo "❌ npm start terminó con código de error: $EXIT_CODE"
-  echo "   Esperando 30 segundos para que puedas ver este mensaje..."
-  sleep 30
+  echo "   Esto significa que Strapi no pudo iniciar correctamente"
+  echo "   Revisa los logs arriba para ver el error específico"
+  echo ""
+  echo "   Esperando 60 segundos para que puedas ver este mensaje..."
+  sleep 60
+else
+  echo "✅ npm start terminó normalmente (código: $EXIT_CODE)"
 fi
 
 exit $EXIT_CODE
