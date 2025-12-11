@@ -12,24 +12,5 @@ export default factories.createCoreRouter('api::usuario.usuario', {
     findOne: {
       auth: false,
     },
-    create: {
-      auth: false,
-    },
-    update: {
-      auth: false,
-    },
-    delete: {
-      auth: false,
-    },
   },
-  routes: [
-    {
-      method: 'POST',
-      path: '/usuarios/login',
-      handler: 'usuario.login',
-      config: {
-        auth: false,
-      },
-    },
-  ],
 });
