@@ -33,12 +33,15 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       
+      - name: Setup Railway CLI
+        run: npm install -g @railway/cli
+      
       - name: Deploy Backend to Railway
-        uses: bervProject/railway-deploy@v3.3.0
-        with:
-          railway_token: ${{ secrets.RAILWAY_TOKEN }}
-          service: 'backend'  # Nombre de tu servicio backend en Railway
-          detach: false
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+        run: |
+          cd backend
+          railway up --service backend --detach
 
   deploy-frontend:
     needs: detect-changes
@@ -47,10 +50,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       
+      - name: Setup Railway CLI
+        run: npm install -g @railway/cli
+      
       - name: Deploy Frontend to Railway
-        uses: bervProject/railway-deploy@v3.3.0
-        with:
-          railway_token: ${{ secrets.RAILWAY_TOKEN }}
-          service: 'frontend'  # Nombre de tu servicio frontend en Railway
-          detach: false
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+        run: |
+          cd frontend
+          railway up --service frontend --detach
 
