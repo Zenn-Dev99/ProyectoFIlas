@@ -1,0 +1,29 @@
+# Dockerfile para Backend (Strapi)
+FROM node:20-alpine
+
+# Instalar dependencias del sistema necesarias para pg y better-sqlite3
+RUN apk add --no-cache python3 make g++
+
+WORKDIR /app
+
+# Copiar archivos de dependencias
+COPY package*.json ./
+
+# Instalar dependencias
+RUN npm ci --only=production && npm cache clean --force
+
+# Copiar el resto de la aplicación
+COPY . .
+
+# Crear directorio de uploads
+RUN mkdir -p public/uploads
+
+# Build de Strapi
+RUN npm run build
+
+# Exponer puerto
+EXPOSE 1337
+
+# Comando de inicio
+CMD ["npm", "start"]
+
