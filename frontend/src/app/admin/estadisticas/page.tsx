@@ -175,7 +175,7 @@ export default function AdminEstadisticasPage() {
                 cx="50%"
                 cy="50%"
                 labelLine={false}
-                label={({ tipo, porcentaje }) => `${tipo}: ${porcentaje}%`}
+                label={(entry: any) => `${entry.tipo}: ${entry.porcentaje}%`}
                 outerRadius={80}
                 fill="#8884d8"
                 dataKey="cantidad"
