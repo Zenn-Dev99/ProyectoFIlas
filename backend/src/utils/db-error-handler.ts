@@ -2,13 +2,19 @@
  * Utilidad para manejar errores de base de datos y mostrar mensajes más claros
  */
 
+interface AggregateErrorLike {
+  name: string;
+  errors?: any[];
+  message: string;
+}
+
 export function handleDatabaseError(error: any) {
   if (error instanceof Error) {
     // AggregateError contiene múltiples errores
-    if (error.name === 'AggregateError' && 'errors' in error) {
-      const aggregateError = error as AggregateError;
+    const errorObj = error as any;
+    if (error.name === 'AggregateError' && Array.isArray(errorObj.errors)) {
       console.error('❌ AggregateError - Múltiples errores:');
-      aggregateError.errors.forEach((err, index) => {
+      errorObj.errors.forEach((err: any, index: number) => {
         console.error(`   Error ${index + 1}:`, err);
         if (err instanceof Error) {
           console.error(`   Mensaje: ${err.message}`);
