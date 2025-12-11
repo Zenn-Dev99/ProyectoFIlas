@@ -41,8 +41,7 @@ jobs:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
         run: |
           cd backend
-          railway link --service BACKEND_SERVICE_ID
-          railway up --detach
+          railway up --service proyectofilas-production --detach
 
   deploy-frontend:
     needs: detect-changes
@@ -59,6 +58,5 @@ jobs:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
         run: |
           cd frontend
-          railway link --service FRONTEND_SERVICE_ID
-          railway up --detach
+          railway up --service steadfast-spontaneity-production --detach
 

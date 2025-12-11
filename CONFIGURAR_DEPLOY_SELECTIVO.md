@@ -34,31 +34,20 @@ He creado un workflow de GitHub Actions que detecta qué servicio cambió y solo
 
 ---
 
-## 📝 Paso 3: Obtener Service IDs de Railway
+## 📝 Paso 3: Verificar Nombres de Servicios
 
-El workflow necesita los IDs de tus servicios. Para obtenerlos:
+El workflow ya está configurado con los nombres de tus servicios:
+- **Backend:** `proyectofilas-production`
+- **Frontend:** `steadfast-spontaneity-production`
 
-### Opción A: Desde Railway Dashboard
+Si los nombres de tus servicios en Railway son diferentes, actualiza `.github/workflows/deploy.yml`:
 
-1. Ve a tu servicio Backend en Railway
-2. En la URL verás algo como: `https://railway.app/project/abc123/service/def456`
-3. El `def456` es el Service ID del Backend
-4. Repite para el Frontend
+1. Abre `.github/workflows/deploy.yml`
+2. Busca `--service proyectofilas-production` y reemplázalo con el nombre real de tu servicio backend
+3. Busca `--service steadfast-spontaneity-production` y reemplázalo con el nombre real de tu servicio frontend
 
-### Opción B: Usando Railway CLI
-
-```bash
-# Instalar Railway CLI
-npm install -g @railway/cli
-
-# Login
-railway login
-
-# Listar servicios
-railway service list
-```
-
-Luego actualiza `.github/workflows/deploy.yml` con los Service IDs correctos.
+**Para verificar los nombres:**
+- Ve a Railway → Tu servicio → Settings → El nombre aparece en la parte superior
 
 ---
 
